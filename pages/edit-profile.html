@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Game Store</title>
+    <link rel="stylesheet" href="..\styles\globals.css">
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="nav-items">
+            <a href="login.html">Login</a>
+            <a href="index.html">Home</a>
+            <a href="search.html">Category</a>
+            <a href="my-cart.html">My Cart</a>
+            <a href="user-profile.html">User Profile</a>
+        </div>
+        <div class="search-container">
+            <input class="search-input" type="text" placeholder="Search games..." />
+            <button class="search-button" onclick="onSearchClick()">Search</button>
+        </div>
+        <div>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="title">Edit Profile</h1>
+        <form id="editProfileForm" class="edit-profile-form">
+            <div>
+                <label for="id">ID</label><br>
+                <input type="text" id="id" disabled />
+            </div>
+            <div>
+                <label for="isAdmin">Admin</label><br>
+                <input type="checkbox" id="isAdmin" disabled />
+            </div>
+            <div>
+                <label for="name">Name</label>
+                <input type="text" id="name" class="edit-profile-input" required />
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" class="edit-profile-input" required />
+            </div>
+            <div>
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" class="edit-profile-input" required />
+            </div>
+            <div>
+                <button type="submit" class="button">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>About</h3>
+                <p>Welcome to Game Store, your source for the best games at the best prices.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: support@gamestore.com</p>
+                <p>Phone: +1 (555) 123-4567</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <p><a href="#">Facebook</a></p>
+                <p><a href="#">Twitter</a></p>
+                <p><a href="#">Instagram</a></p>
+            </div>
+        </div>
+    </footer>
+    <script src="..\script.js"></script>
+</body>
+
+</html>

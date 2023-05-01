@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Store - User Profile</title>
+  <link rel="stylesheet" href="..\styles\globals.css">
+</head>
+
+<body>
+  <div class="navbar">
+    <div class="nav-items">
+      <a href="login.html">Login</a>
+      <a href="index.html">Home</a>
+      <a href="search.html">Category</a>
+      <a href="my-cart.html">My Cart</a>
+      <a href="user-profile.html">User Profile</a>
+    </div>
+    <div class="search-container">
+      <input class="search-input" type="text" placeholder="Search games..." />
+      <button class="search-button" onclick="onSearchClick()">Search</button>
+    </div>
+    <div>
+      <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1 class="title">User Profile</h1>
+    <div class="user-info">
+      <img class="user-avatar" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="User Avatar">
+      <div>
+        <p class="user-id">ID: 12345</p>
+        <p class="user-isAdmin">Admin: No</p>
+        <h2 class="user-name">Rubens</h2>
+        <p class="user-email">rubenszinho@example.com</p>
+        <p class="user-phone">Phone: +1 (555) 123-4567</p>
+      </div>
+    </div>
+    <a class="button" href="edit-profile.html">Edit Profile</a>
+  </div>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>About</h3>
+        <p>Welcome to Game Store, your source for the best games at the best prices.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <p>Email: support@gamestore.com</p>
+        <p>Phone: +1 (555) 123-4567</p>
+      </div>
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <p><a href="#">Facebook</a></p>
+        <p><a href="#">Twitter</a></p>
+        <p><a href="#">Instagram</a></p>
+      </div>
+    </div>
+  </footer>
+  <script src="..\script.js"></script>
+</body>
+
+</html>
