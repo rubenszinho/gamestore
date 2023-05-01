@@ -1,0 +1,102 @@
+@import 'Navbar.css';
+@import 'GameCard.css';
+@import 'Footer.css';
+@import 'Search.css';
+@import 'Carousel.css';
+@import 'UserProfile.css';
+@import 'MyCart.css';
+@import 'Buttons.css';
+@import 'Form.css';
+@import 'GameDetails.css';
+@import 'AdminFeature.css';
+
+/* Dark theme */
+:root {
+    --background-color: #F1F1F1;
+    --title-color: #073642;
+    --text-color: #657b83;
+    --accent-color: #268bd2;
+    --navbar-color: #073642;
+    --navbar-hover-color: #F1F1F1;
+    --navbar-hover-text-color: #657b83;
+    --card-background-color: #F1F1F1;
+    --card-border-color: #F1F1F1;
+    --card-text-color: #073642;
+    --card-price-text-color: #657b83;
+    --footer-color: #073642;
+    --footer-text-color: #657b83;
+}
+
+/* Light theme */
+[data-theme="solarized"] {
+    --background-color: #fdf6e3;
+    --title-color: #839496;
+    --text-color: #657b83;
+    --accent-color: #268bd2;
+    --navbar-color: #eee8d5;
+    --navbar-hover-color: #fdf6e3;
+    --navbar-hover-text-color: #657b83;
+    --card-background-color: #eee8d5;
+    --card-border-color: #93a1a1;
+    --card-text-color: #657b83;
+    --card-price-text-color: #657b83;
+    --footer-color: #eee8d5;
+    --footer-text-color: #839496;
+}
+
+/* Solarized theme */
+[data-theme="light"] {
+    --background-color: #073642;
+    --title-color: #839496;
+    --text-color: #839496;
+    --accent-color: #268bd2;
+    --navbar-color: #002b36;
+    --navbar-hover-color: #073642;
+    --navbar-hover-text-color: #839496;
+    --card-background-color: #002b36;
+    --card-border-color: #586e75;
+    --card-text-color: #839496;
+    --card-price-text-color: #657b83;
+    --footer-color: #002b36;
+    --footer-text-color: #839496;
+}
+
+[data-theme="dark"] {
+    --background-color: #002b36;
+    --title-color: #839496;
+    --text-color: #839496;
+    --accent-color: #268bd2;
+    --navbar-color: #073642;
+    --navbar-hover-color: #002b36;
+    --navbar-hover-text-color: #839496;
+    --card-background-color: #073642;
+    --card-border-color: #586e75;
+    --card-text-color: #839496;
+    --card-price-text-color: #657b83;
+    --footer-color: #073642;
+    --footer-text-color: #839496;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.container {
+    margin: 20px;
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--title-color);
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 20px;
+}

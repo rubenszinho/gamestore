@@ -1,0 +1,81 @@
+.edit-profile-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.edit-profile-form input[type="ID"] {
+    background-color: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 14px;
+    color: var(--card-text-color);
+    width: 150px;
+}
+
+
+.edit-profile-form input[type="text"] {
+    background-color: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 14px;
+    color: var(--card-text-color);
+    width: 250;
+}
+
+.edit-profile-form input[type="email"] {
+    background-color: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 14px;
+    color: var(--card-text-color);
+    width: 250;
+}
+
+.edit-profile-form:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.edit-profile-form label {
+    font-weight: bold;
+    color: var(--title-color);
+}
+
+
+.login-container,
+.register-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form label {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.auth-form input {
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.auth-form button {
+    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

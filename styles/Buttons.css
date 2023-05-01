@@ -1,0 +1,22 @@
+.button {
+    background-color: var(--navbar-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.button:hover {
+    background-color: var(--navbar-hover-color);
+    color: var(--navbar-hover-text-color);
+}
+
+.button:active {
+    position: relative;
+    top: 1px;
+}
