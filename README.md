@@ -1,5 +1,11 @@
 # Relatório do Projeto de Desenvolvimento da GameStore - Milestone 1
 
+| Nome    | NUSP | 
+| -------- | ------- | 
+| Fabrício Sampaio   | 12547423   | 
+| Arthur Pin | 12691964     | 
+| Samuel Rubens Souza Oliveira    | 11912533    |
+
 ## Data: 03/05/2023
 
 ### Requisitos 
@@ -7,6 +13,8 @@ Os requisitos iniciais foram fornecidos na tarefa e incluem a existência de doi
 
 ### Descrição do Projeto
 O projeto foi desenvolvido utilizando HTML, CSS e JavaScript. Foi implementado um layout responsivo, que se adapta a diferentes tamanhos de tela e dispositivos. A estrutura das páginas inclui uma barra de navegação, conteúdo principal e rodapé. Além disso, foi criado um sistema de troca de temas (escuro, claro e solarizado) e um protótipo de dados a serem consumidos, que no caso foram intermediados pela RAWG API, que ja é especializada em jogos.
+
+![](https://github.com/rubenszinho/gamestore/blob/develop/diagram.png)
 
 ### Comentários sobre o código
 O código foi organizado em arquivos separados para facilitar a manutenção e a legibilidade. Os arquivos de estilo (CSS) foram separados por componentes, como navbar, game card, footer, entre outros. Os scripts (JavaScript) também foram separados por funcionalidade. A modularização e a redução de variáveis globais tornaram o código mais robusto e fácil de manter.
