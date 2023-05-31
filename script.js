@@ -9,7 +9,8 @@ async function fetchGames(options = {}) {
     const response = await fetch(url);
     const data = await response.json();
     return data.results;
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Error fetching game data:', error);
   }
 }
@@ -30,6 +31,7 @@ function createGameCard(game) {
   const gameCard = document.createElement('div');
   gameCard.classList.add('game-card');
   // gameCard.setAttribute('data-game-id', gameId); // Replace with your gameId variable
+  gameCard.setAttribute('game-name', game.name); // como nao tem ID, estamos usando nome
   gameCard.onclick = onGameCardClick;
   gameCard.className = 'game-card';
 
@@ -68,16 +70,17 @@ function createBanner(game) {
   gameName.classList.add('banner__game-name');
   gameName.textContent = game.name;
   banner.appendChild(gameName);
+  banner.setAttribute('game-name', game.name);
 
   banner.onclick = onBannerClick;
 
   return banner;
 }
 
-
 async function populateHomePage() {
   const searchParams = new URLSearchParams(window.location.search);
   const searchText = searchParams.get('search');
+  const gameName = searchParams.get('name')
 
   document.querySelectorAll(".game-card").forEach(card => {
     card.addEventListener("click", () => {
@@ -87,6 +90,10 @@ async function populateHomePage() {
 
   if (searchText) {
     await populateSearchPage(searchText);
+  } else if (gameName) {
+    const gameInfo = await fetchGames({ title: gameName })
+    console.log(gameInfo[0]);
+    // colocar as infos do jogo no site
   } else {
     const featuredGames = await fetchFeaturedGames();
     const topGames = await fetchTopGames();
@@ -162,10 +169,8 @@ function onSearchClick() {
   }
 }
 
-populateHomePage();
-
 async function populateSearchPage(searchText) {
-  const searchResults = await fetchGames({ title: searchText });
+  const searchResults = await fetchGames({ ordering: '-rating', title: searchText });
 
   const searchResultsContainer = document.querySelector('.grid-container.search-results');
   searchResultsContainer.innerHTML = ''; // Clear any previous search results
@@ -174,10 +179,6 @@ async function populateSearchPage(searchText) {
     const gameCard = createGameCard(game);
     searchResultsContainer.appendChild(gameCard);
   });
-}
-
-if (document.querySelector('.grid-container.search-results')) {
-  populateSearchPage();
 }
 
 // Update this function to handle the new fields
@@ -207,6 +208,23 @@ function updateUserProfile() {
   }
 }
 
+function onGameCardClick(event) {
+  //const gameId = event.currentTarget.getAttribute('data-game-id');
+  const gameName = event.currentTarget.getAttribute('game-name')
+  window.location.href = `game-details.html?name=${encodeURIComponent(gameName)}`; // Assuming game-details.html is the game details page
+}
+
+function onBannerClick(event) {
+  //const gameId = event.currentTarget.getAttribute('data-game-id');
+  const gameName = event.currentTarget.getAttribute('game-name')
+  window.location.href = `game-details.html?name=${encodeURIComponent(gameName)}`; // Assuming game-details.html is the game details page
+}
+
+populateHomePage();
+
+//if (document.querySelector('.grid-container.search-results')) {
+//  populateSearchPage();
+//}
 
 // Call updateUserProfile when the page loads
 updateUserProfile();
@@ -233,14 +251,4 @@ if (editProfileForm) {
       }
     });
   });
-}
-
-function onGameCardClick(event) {
-  const gameId = event.currentTarget.getAttribute('data-game-id');
-  window.location.href = `game-details.html`; // Assuming game-details.html is the game details page
-}
-
-function onBannerClick(event) {
-  const gameId = event.currentTarget.getAttribute('data-game-id');
-  window.location.href = `game-details.html`; // Assuming game-details.html is the game details page
 }
