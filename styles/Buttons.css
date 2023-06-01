@@ -1,6 +1,6 @@
 .button {
-    background-color: var(--navbar-color);
-    color: var(--text-color);
+    background-color: var(--button-background-color);
+    color: var(--button-text-color);
     border: none;
     padding: 10px 20px;
     font-size: 14px;
@@ -12,8 +12,7 @@
 }
 
 .button:hover {
-    background-color: var(--navbar-hover-color);
-    color: var(--navbar-hover-text-color);
+    background-color: var(--accent-color);
 }
 
 .button:active {

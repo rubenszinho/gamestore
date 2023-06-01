@@ -38,16 +38,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
-    color: var(--card-text-color);
+    color: var(--text-color);
 }
 
 .game-card__price {
     font-weight: bold;
-    color: var(--card-price-text-color);
+    color: var(--accent-color);
     position: absolute;
     bottom: 5px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.8);
+    left: 5px;
+    background-color: var(--card-background-color);
     padding: 5px 8px;
     border-radius: 5px;
     backdrop-filter: blur(5px);

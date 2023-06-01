@@ -147,15 +147,16 @@ async function populateHomePage() {
   }
 }
 
-let currentTheme = "default";
+let currentTheme = "light";
 
 function toggleTheme() {
-  const themeOrder = ["default", "solarized", "light", "dark"];
+  const themeOrder = ["light", "dark"];
   let index = themeOrder.indexOf(currentTheme);
   index = (index + 1) % themeOrder.length;
   currentTheme = themeOrder[index];
 
   document.documentElement.setAttribute("data-theme", currentTheme);
+  document.querySelector('#theme-toggle')?.setAttribute('aria-label', currentTheme);
 }
 
 function onSearchClick() {

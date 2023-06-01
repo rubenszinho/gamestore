@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--navbar-color);
+    background-color: var(--background-highlight-color);
 }
 
 .navbar .nav-items {
@@ -18,15 +18,15 @@
 }
 
 .navbar a:hover {
-    background-color: var(--navbar-hover-color);
-    color: var(--navbar-hover-text-color);
+    background-color: var(--text-color);
+    color: var(--background-color);
 }
 
 .theme-toggle {
     padding-left: 15px;
     background: none;
     border: none;
-    color: var(--text);
+    color: var(--text-color);
     font-size: 16px;
     cursor: pointer;
     margin-right: 16px;
@@ -35,17 +35,18 @@
 .search-container {
     display: flex;
     align-items: center;
-    background-color: var(--navbar-color);
-    border-radius: 0;
-    border: 1px solid var(--text-color);
+    background-color: var(--background-color);
+    border-radius: 12px;
     margin-left: auto;
 }
 
 .search-input {
     border: none;
+    border-radius: 12px;
     outline: none;
-    background-color: var(--navbar-color);
+    background-color: var(--background-color);
     color: var(--text-color);
+    font-size: 16px;
     padding: 10px;
     width: 100%;
 }
@@ -53,7 +54,8 @@
 .search-button {
     background-color: var(--text-color);
     border: none;
-    color: var(--navbar-color);
+    border-radius: 12px;
+    color: var(--background-color);
     cursor: pointer;
     font-size: 16px;
     padding: 10px;

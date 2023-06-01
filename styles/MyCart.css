@@ -32,11 +32,11 @@
 .cart-item-price {
     font-size: 16px;
     font-weight: bold;
-    color: var(--card-price-text-color);
+    color: var(--accent-color);
 }
 
 .cart-item-remove {
-    background-color: var(--accent-color);
+    background-color: var(--background-highlight-color);
     color: #fff;
     border: none;
     cursor: pointer;
