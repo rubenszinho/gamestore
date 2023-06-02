@@ -225,7 +225,7 @@ function updateUserProfile() {
     isAdmin: false,
   };
 
-  if (document.querySelector(".user-name")) {
+  if (document.querySelector(".user-name")) { // se estiver na pagina de perfil
     document.querySelector(".user-name").textContent = userProfile.name;
     document.querySelector(".user-email").textContent = userProfile.email;
     document.querySelector(".user-id").textContent = `ID: ${userProfile.id}`;
@@ -233,7 +233,7 @@ function updateUserProfile() {
     document.querySelector(".user-isAdmin").textContent = `Admin: ${userProfile.isAdmin ? "Yes" : "No"}`;
   }
 
-  if (document.getElementById("name")) {
+  if (document.getElementById("name")) { // se estiver na pagina de edição de perfil
     document.getElementById("name").value = userProfile.name;
     document.getElementById("email").value = userProfile.email;
     document.getElementById("id").value = userProfile.id;
@@ -244,29 +244,25 @@ function updateUserProfile() {
 
 populatePage();
 
-// Call updateUserProfile when the page loads
 updateUserProfile();
 
 const editProfileForm = document.getElementById("editProfileForm");
-if (editProfileForm) {
-  editProfileForm.addEventListener("submit", (e) => {
-    // Update the form submit event listener to save the new fields
-    document.getElementById("editProfileForm").addEventListener("submit", (e) => {
-      e.preventDefault();
+if (editProfileForm) { // se estiver na pagina de edição de perfil
+  document.getElementById("editProfileForm").addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
-      const id = document.getElementById("id").value;
-      const isAdmin = document.getElementById("isAdmin").checked;
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const id = document.getElementById("id").value;
+    const isAdmin = document.getElementById("isAdmin").checked;
 
-      if (name && email && phone) {
-        localStorage.setItem("userProfile", JSON.stringify({ id, name, email, phone, isAdmin }));
-        alert("Profile saved successfully.");
-        updateUserProfile();
-      } else {
-        alert("Please fill in all fields.");
-      }
-    });
+    if (name && email && phone) {
+      localStorage.setItem("userProfile", JSON.stringify({ id, name, email, phone, isAdmin }));
+      alert("Profile saved successfully.");
+      updateUserProfile();
+    } else {
+      alert("Please fill in all fields.");
+    }
   });
 }
