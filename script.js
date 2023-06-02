@@ -1,6 +1,18 @@
 const API_KEY = "d25aa82587884b22824222c27300a44d";
 const gridContainer = document.querySelector('.grid-container');
 
+let currentTheme = "light";
+
+function toggleTheme() {
+  const themeOrder = ["light", "dark"];
+  let index = themeOrder.indexOf(currentTheme);
+  index = (index + 1) % themeOrder.length;
+  currentTheme = themeOrder[index];
+
+  document.documentElement.setAttribute("data-theme", currentTheme);
+  document.querySelector('#theme-toggle')?.setAttribute('aria-label', currentTheme);
+}
+
 async function fetchGames(options = {}) {
   const { title = '', ordering = '', dates = '', id= '' } = options;
   
@@ -104,29 +116,6 @@ async function populatePage() {
   }
 }
 
-let currentTheme = "light";
-
-function toggleTheme() {
-  const themeOrder = ["light", "dark"];
-  let index = themeOrder.indexOf(currentTheme);
-  index = (index + 1) % themeOrder.length;
-  currentTheme = themeOrder[index];
-
-  document.documentElement.setAttribute("data-theme", currentTheme);
-  document.querySelector('#theme-toggle')?.setAttribute('aria-label', currentTheme);
-}
-
-function onSearchClick() {
-  const searchInput = document.querySelector('.search-input');
-  const searchText = searchInput.value.trim();
-
-  if (searchText) {
-    window.location.href = `search.html?search=${encodeURIComponent(searchText)}`;
-  } else {
-    alert('Please enter a search term.');
-  }
-}
-
 async function populateSearchPage(searchText) {
   const searchResults = await fetchGames({ ordering: '-rating', title: searchText });
 
@@ -203,6 +192,41 @@ async function populateHomePage() {
       moveCarousel(1);
     });
 }
+
+function onSearchClick() {
+  const searchInput = document.querySelector('.search-input');
+  const searchText = searchInput.value.trim();
+
+  if (searchText) {
+    window.location.href = `search.html?search=${encodeURIComponent(searchText)}`;
+  } else {
+    alert('Please enter a search term.');
+  }
+}
+
+function onSearchEnter(event) {
+  if (event.keyCode === 13) { // enter foi inserido
+    const searchInput = document.querySelector('.search-input');
+    const searchText = searchInput.value.trim();
+
+    if (searchText) {
+      window.location.href = `search.html?search=${encodeURIComponent(searchText)}`;
+    } else {
+      alert('Please enter a search term.');
+    }
+  }
+}
+
+function onGameCardClick(event) {
+  const gameId = event.currentTarget.getAttribute('game-id');
+  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
+}
+
+function onBannerClick(event) {
+  const gameId = event.currentTarget.getAttribute('game-id');
+  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
+}
+
 // Update this function to handle the new fields
 function updateUserProfile() {
   const userProfile = JSON.parse(localStorage.getItem("userProfile")) || {
@@ -229,17 +253,6 @@ function updateUserProfile() {
     document.getElementById("isAdmin").checked = userProfile.isAdmin;
   }
 }
-
-function onGameCardClick(event) {
-  const gameId = event.currentTarget.getAttribute('game-id');
-  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
-}
-
-function onBannerClick(event) {
-  const gameId = event.currentTarget.getAttribute('game-id');
-  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
-}
-
 
 populatePage();
 

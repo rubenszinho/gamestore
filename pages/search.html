@@ -18,8 +18,8 @@
       <a href="user-profile.html">User Profile</a>
     </div>
     <div class="search-container">
-      <input class="search-input" type="text" placeholder="Search games..." />
-      <button class="search-button" onclick="onSearchClick()">Search</button>
+      <input class="search-input" type="text" placeholder="Search games..." onkeydown="onSearchEnter(event)"/>
+      <button class="search-button" onclick="onSearchClick()" on>Search</button>
     </div>
     <div>
       <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
