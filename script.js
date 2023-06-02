@@ -2,13 +2,20 @@ const API_KEY = "d25aa82587884b22824222c27300a44d";
 const gridContainer = document.querySelector('.grid-container');
 
 async function fetchGames(options = {}) {
-  const { title = '', ordering = '', dates = '' } = options;
-  const url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(title)}&ordering=${ordering}&dates=${dates}&page_size=8`;
+  const { title = '', ordering = '', dates = '', id= '' } = options;
+  
+  let url;
+  // the url for a single game fetch is different
+  if (id) {
+    url = `https://api.rawg.io/api/games/${id}?key=${API_KEY}`
+  } else {
+    url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(title)}&ordering=${ordering}&dates=${dates}&page_size=8`;
+  }
 
   try {
     const response = await fetch(url);
     const data = await response.json();
-    return data.results;
+    return (id) ? data : data.results;
   } 
   catch (error) {
     console.error('Error fetching game data:', error);
@@ -30,8 +37,7 @@ async function fetchNewReleases() {
 function createGameCard(game) {
   const gameCard = document.createElement('div');
   gameCard.classList.add('game-card');
-  // gameCard.setAttribute('data-game-id', gameId); // Replace with your gameId variable
-  gameCard.setAttribute('game-name', game.name); // como nao tem ID, estamos usando nome
+  gameCard.setAttribute('game-id', game.id);
   gameCard.onclick = onGameCardClick;
   gameCard.className = 'game-card';
 
@@ -61,7 +67,6 @@ function createGameCard(game) {
 }
 
 function createBanner(game) {
-
   const banner = document.createElement('div');
   banner.classList.add('banner');
   banner.style.backgroundImage = `url(${game.background_image})`;
@@ -70,17 +75,17 @@ function createBanner(game) {
   gameName.classList.add('banner__game-name');
   gameName.textContent = game.name;
   banner.appendChild(gameName);
-  banner.setAttribute('game-name', game.name);
+  banner.setAttribute('game-id', game.id);
 
   banner.onclick = onBannerClick;
 
   return banner;
 }
 
-async function populateHomePage() {
+async function populatePage() {
   const searchParams = new URLSearchParams(window.location.search);
   const searchText = searchParams.get('search');
-  const gameName = searchParams.get('name')
+  const gameId = searchParams.get('id')
 
   document.querySelectorAll(".game-card").forEach(card => {
     card.addEventListener("click", () => {
@@ -90,12 +95,65 @@ async function populateHomePage() {
 
   if (searchText) {
     await populateSearchPage(searchText);
-  } else if (gameName) {
-    const gameInfo = await fetchGames({ title: gameName })
-    console.log(gameInfo[0]);
-    // colocar as infos do jogo no site
+
+  } else if (gameId) {
+    await populateGameDetailsPage(gameId)
+    
   } else {
-    const featuredGames = await fetchFeaturedGames();
+    await populateHomePage()
+  }
+}
+
+let currentTheme = "light";
+
+function toggleTheme() {
+  const themeOrder = ["light", "dark"];
+  let index = themeOrder.indexOf(currentTheme);
+  index = (index + 1) % themeOrder.length;
+  currentTheme = themeOrder[index];
+
+  document.documentElement.setAttribute("data-theme", currentTheme);
+  document.querySelector('#theme-toggle')?.setAttribute('aria-label', currentTheme);
+}
+
+function onSearchClick() {
+  const searchInput = document.querySelector('.search-input');
+  const searchText = searchInput.value.trim();
+
+  if (searchText) {
+    window.location.href = `search.html?search=${encodeURIComponent(searchText)}`;
+  } else {
+    alert('Please enter a search term.');
+  }
+}
+
+async function populateSearchPage(searchText) {
+  const searchResults = await fetchGames({ ordering: '-rating', title: searchText });
+
+  const searchResultsContainer = document.querySelector('.grid-container.search-results');
+  searchResultsContainer.innerHTML = ''; // Clear any previous search results
+
+  searchResults.forEach((game) => {
+    const gameCard = createGameCard(game);
+    searchResultsContainer.appendChild(gameCard);
+  });
+}
+
+async function populateGameDetailsPage(gameId) {
+  const game = await fetchGames({ id: gameId })
+  // coloca a imagem do jogo selecionado na pagina
+  const imgDiv = document.querySelector('.game-details__image');
+  const gameImg = document.createElement('img');
+  gameImg.alt = game.name
+  gameImg.src = game.background_image
+  imgDiv.appendChild(gameImg)
+  // coloca as informções escritas na pagina
+  document.querySelector('.game-details__title').textContent = game.name
+  document.querySelector('.game-details__description').textContent = game.description_raw
+}
+
+async function populateHomePage() {
+  const featuredGames = await fetchFeaturedGames();
     const topGames = await fetchTopGames();
     const newReleases = await fetchNewReleases();
 
@@ -144,44 +202,7 @@ async function populateHomePage() {
     carouselButtonRight.addEventListener('click', () => {
       moveCarousel(1);
     });
-  }
 }
-
-let currentTheme = "light";
-
-function toggleTheme() {
-  const themeOrder = ["light", "dark"];
-  let index = themeOrder.indexOf(currentTheme);
-  index = (index + 1) % themeOrder.length;
-  currentTheme = themeOrder[index];
-
-  document.documentElement.setAttribute("data-theme", currentTheme);
-  document.querySelector('#theme-toggle')?.setAttribute('aria-label', currentTheme);
-}
-
-function onSearchClick() {
-  const searchInput = document.querySelector('.search-input');
-  const searchText = searchInput.value.trim();
-
-  if (searchText) {
-    window.location.href = `search.html?search=${encodeURIComponent(searchText)}`;
-  } else {
-    alert('Please enter a search term.');
-  }
-}
-
-async function populateSearchPage(searchText) {
-  const searchResults = await fetchGames({ ordering: '-rating', title: searchText });
-
-  const searchResultsContainer = document.querySelector('.grid-container.search-results');
-  searchResultsContainer.innerHTML = ''; // Clear any previous search results
-
-  searchResults.forEach((game) => {
-    const gameCard = createGameCard(game);
-    searchResultsContainer.appendChild(gameCard);
-  });
-}
-
 // Update this function to handle the new fields
 function updateUserProfile() {
   const userProfile = JSON.parse(localStorage.getItem("userProfile")) || {
@@ -210,22 +231,17 @@ function updateUserProfile() {
 }
 
 function onGameCardClick(event) {
-  //const gameId = event.currentTarget.getAttribute('data-game-id');
-  const gameName = event.currentTarget.getAttribute('game-name')
-  window.location.href = `game-details.html?name=${encodeURIComponent(gameName)}`; // Assuming game-details.html is the game details page
+  const gameId = event.currentTarget.getAttribute('game-id');
+  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
 }
 
 function onBannerClick(event) {
-  //const gameId = event.currentTarget.getAttribute('data-game-id');
-  const gameName = event.currentTarget.getAttribute('game-name')
-  window.location.href = `game-details.html?name=${encodeURIComponent(gameName)}`; // Assuming game-details.html is the game details page
+  const gameId = event.currentTarget.getAttribute('game-id');
+  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
 }
 
-populateHomePage();
 
-//if (document.querySelector('.grid-container.search-results')) {
-//  populateSearchPage();
-//}
+populatePage();
 
 // Call updateUserProfile when the page loads
 updateUserProfile();
