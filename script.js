@@ -14,14 +14,13 @@ function toggleTheme() {
 }
 
 async function fetchGames(options = {}) {
-  const { title = '', ordering = '', dates = '', id= '' } = options;
+  const { search = '', ordering = '', dates = '', id= '' } = options;
   
-  let url;
-  // the url for a single game fetch is different
+  let url; // the url for a single game fetch is different
   if (id) {
     url = `https://api.rawg.io/api/games/${id}?key=${API_KEY}`
   } else {
-    url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(title)}&ordering=${ordering}&dates=${dates}&page_size=8`;
+    url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(search)}&ordering=${ordering}&dates=${dates}&page_size=8`;
   }
 
   try {
@@ -50,7 +49,7 @@ function createGameCard(game) {
   const gameCard = document.createElement('div');
   gameCard.classList.add('game-card');
   gameCard.setAttribute('game-id', game.id);
-  gameCard.onclick = onGameCardClick;
+  gameCard.onclick = onGameClick;
   gameCard.className = 'game-card';
 
   const thumbnail = document.createElement('div');
@@ -89,7 +88,7 @@ function createBanner(game) {
   banner.appendChild(gameName);
   banner.setAttribute('game-id', game.id);
 
-  banner.onclick = onBannerClick;
+  banner.onclick = onGameClick;
 
   return banner;
 }
@@ -98,12 +97,6 @@ async function populatePage() {
   const searchParams = new URLSearchParams(window.location.search);
   const searchText = searchParams.get('search');
   const gameId = searchParams.get('id')
-
-  document.querySelectorAll(".game-card").forEach(card => {
-    card.addEventListener("click", () => {
-      window.location.href = "game-details.html";
-    });
-  });
 
   if (searchText) {
     await populateSearchPage(searchText);
@@ -117,7 +110,7 @@ async function populatePage() {
 }
 
 async function populateSearchPage(searchText) {
-  const searchResults = await fetchGames({ ordering: '-rating', title: searchText });
+  const searchResults = await fetchGames({ ordering: '-rating', search: searchText });
 
   const searchResultsContainer = document.querySelector('.grid-container.search-results');
   searchResultsContainer.innerHTML = ''; // Clear any previous search results
@@ -130,6 +123,7 @@ async function populateSearchPage(searchText) {
 
 async function populateGameDetailsPage(gameId) {
   const game = await fetchGames({ id: gameId })
+  console.log(game)
   // coloca a imagem do jogo selecionado na pagina
   const imgDiv = document.querySelector('.game-details__image');
   const gameImg = document.createElement('img');
@@ -143,54 +137,53 @@ async function populateGameDetailsPage(gameId) {
 
 async function populateHomePage() {
   const featuredGames = await fetchFeaturedGames();
-    const topGames = await fetchTopGames();
-    const newReleases = await fetchNewReleases();
+  const topGames = await fetchTopGames();
+  const newReleases = await fetchNewReleases();
 
-    const topGamesContainer = document.querySelector('.grid-container.top-games');
-    topGames.forEach((game) => {
-      const gameCard = createGameCard(game);
-      topGamesContainer.appendChild(gameCard);
-    });
+  const topGamesContainer = document.querySelector('.grid-container.top-games');
+  topGames.forEach((game) => {
+    const gameCard = createGameCard(game);
+    topGamesContainer.appendChild(gameCard);
+  });
 
-    const newReleasesContainer = document.querySelector('.grid-container.new-releases');
-    newReleases.forEach((game) => {
-      const gameCard = createGameCard(game);
-      newReleasesContainer.appendChild(gameCard);
-    });
+  const newReleasesContainer = document.querySelector('.grid-container.new-releases');
+  newReleases.forEach((game) => {
+    const gameCard = createGameCard(game);
+    newReleasesContainer.appendChild(gameCard);
+  });
 
-    const carouselSlide = document.querySelector('.carousel-slide');
+  const carouselSlide = document.querySelector('.carousel-slide');
 
-    featuredGames.forEach((game) => {
-      const banner = createBanner(game);
-      carouselSlide.appendChild(banner);
-    });
+  featuredGames.forEach((game) => {
+    const banner = createBanner(game);
+    carouselSlide.appendChild(banner);
+  });
 
-    const carouselContainer = document.querySelector('.carousel-container');
-    const carouselButtonLeft = document.querySelector('.carousel-button--left');
-    const carouselButtonRight = document.querySelector('.carousel-button--right');
+  const carouselContainer = document.querySelector('.carousel-container');
+  const carouselButtonLeft = document.querySelector('.carousel-button--left');
+  const carouselButtonRight = document.querySelector('.carousel-button--right');
 
-    const banners = document.querySelectorAll('.banner');
-    const numBanners = banners.length;
-    const bannerWidth = banners[0].offsetWidth;
-    const carouselWidth = carouselContainer.clientWidth;
-    const bannersPerPage = Math.floor(carouselWidth / bannerWidth);
+  const banners = document.querySelectorAll('.banner');
+  const numBanners = banners.length;
+  const bannerWidth = banners[0].offsetWidth;
+  const carouselWidth = carouselContainer.clientWidth;
+  const bannersPerPage = Math.floor(carouselWidth / bannerWidth);
 
-    let currentPosition = 0;
-    const slideWidth = 220;
+  let currentPosition = 0;
 
-    function moveCarousel(position) {
-      currentPosition += position * bannersPerPage;
-      currentPosition = Math.max(0, Math.min(currentPosition, numBanners - bannersPerPage));
-      carouselSlide.style.transform = `translateX(-${currentPosition * bannerWidth}px)`;
-    }
+  function moveCarousel(position) {
+    currentPosition += position * bannersPerPage;
+    currentPosition = Math.max(0, Math.min(currentPosition, numBanners - bannersPerPage));
+    carouselSlide.style.transform = `translateX(-${currentPosition * bannerWidth}px)`;
+  }
 
-    carouselButtonLeft.addEventListener('click', () => {
-      moveCarousel(-1);
-    });
+  carouselButtonLeft.addEventListener('click', () => {
+    moveCarousel(-1);
+  });
 
-    carouselButtonRight.addEventListener('click', () => {
-      moveCarousel(1);
-    });
+  carouselButtonRight.addEventListener('click', () => {
+    moveCarousel(1);
+  });
 }
 
 function onSearchClick() {
@@ -217,12 +210,7 @@ function onSearchEnter(event) {
   }
 }
 
-function onGameCardClick(event) {
-  const gameId = event.currentTarget.getAttribute('game-id');
-  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
-}
-
-function onBannerClick(event) {
+function onGameClick(event) {
   const gameId = event.currentTarget.getAttribute('game-id');
   window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
 }
