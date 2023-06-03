@@ -83,9 +83,11 @@ function createBanner(game) {
 
 function createCartItem(game) {
 
-  const item = document.createElement('div')
-  item.classList.add('cart-item')
-  item.setAttribute('game-price', game.id)
+  const item = document.createElement('div');
+  item.classList.add('cart-item');
+  item.setAttribute('game-price', game.id);
+  item.setAttribute('game-id', game.id);
+  item.onclick = () => onGameClick(event);
 
   const itemImg = document.createElement('img')
   itemImg.alt = game.name
@@ -110,6 +112,7 @@ function createCartItem(game) {
   cartItemRemoveButton.setAttribute('game-id', game.id)
 
   cartItemRemoveButton.addEventListener('click', (event) => {
+    event.stopPropagation();
     let oldItems = JSON.parse(localStorage.getItem('cart-items'));
     let newItens = oldItems.filter((item) => {
       return item !== event.currentTarget.getAttribute('game-id');
@@ -180,17 +183,19 @@ async function populateSearchPage(searchText) {
 async function populateGameDetailsPage(gameId) {
   const game = await fetchGames({ id: gameId })
   console.log(game)
-  // coloca a imagem do jogo selecionado na pagina
+  
   const imgDiv = document.querySelector('.game-details__image');
   const gameImg = document.createElement('img');
   gameImg.alt = game.name
   gameImg.src = game.background_image
   imgDiv.appendChild(gameImg)
-  // coloca as informações escritas na pagina
+  
   document.querySelector('.game-details__title').textContent = game.name
   document.querySelector('.game-details__description').innerHTML = game.description
   document.querySelector('.game-details__price').textContent = `$${game.id}`
-  document.querySelector('.button').setAttribute('game-id', gameId)
+
+  document.querySelector('.button').setAttribute('game-id', gameId);
+  document.querySelector('.button').onclick = () => addToCart(event);
 }
 
 async function populateCartPage() {
@@ -202,7 +207,7 @@ async function populateCartPage() {
     const game = await fetchGames({ id: item })
     const cartItem = createCartItem(game)
     items.appendChild(cartItem) 
-    
+
     totalPrice = Number(totalPrice) + Number(cartItem.getAttribute('game-price'));
     document.querySelector('.cart-total-price').innerHTML = `$${totalPrice}`
   })
@@ -292,14 +297,18 @@ function addToCart(item) {
   const gameId = event.currentTarget.getAttribute('game-id');
   let cartItems = JSON.parse(localStorage.getItem('cart-items'))
 
-  // TO-DO ------->>>>> NAO COLOCAR SE O JOGO JA ESTIVER NO CARRINHO
-  if (cartItems) {
-    cartItems.push(gameId)
+  if (!cartItems.includes(gameId)) {  
+    if (cartItems) {
+      cartItems.push(gameId)
+    } else {
+      cartItems = [gameId]
+    }
+    localStorage.setItem('cart-items', JSON.stringify(cartItems))
+
   } else {
-    cartItems = [gameId]
+    alert('Jogo já está no carrinho')
   }
 
-  localStorage.setItem('cart-items', JSON.stringify(cartItems))
   window.location.href = 'my-cart.html'
 }
 
