@@ -1,7 +1,9 @@
 const API_KEY = "d25aa82587884b22824222c27300a44d";
 const gridContainer = document.querySelector('.grid-container');
-
 let currentTheme = "light";
+
+// INICIALIZA A PAGINA ATUAL
+populatePage();
 
 function toggleTheme() {
   const themeOrder = ["light", "dark"];
@@ -15,14 +17,12 @@ function toggleTheme() {
 
 async function fetchGames(options = {}) {
   const { search = '', ordering = '', dates = '', id= '' } = options;
-  
   let url; // the url for a single game fetch is different
   if (id) {
     url = `https://api.rawg.io/api/games/${id}?key=${API_KEY}`
   } else {
-    url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(search)}&ordering=${ordering}&dates=${dates}&page_size=8`;
+    url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${search}&ordering=${ordering}&dates=${dates}&page_size=8`;
   }
-
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -31,18 +31,6 @@ async function fetchGames(options = {}) {
   catch (error) {
     console.error('Error fetching game data:', error);
   }
-}
-
-async function fetchFeaturedGames() {
-  return await fetchGames();
-}
-
-async function fetchTopGames() {
-  return await fetchGames({ ordering: '-rating', dates: '2022-01-01,2022-12-31' });
-}
-
-async function fetchNewReleases() {
-  return await fetchGames({ ordering: '-released', dates: '2022-01-01,2022-12-31' });
 }
 
 function createGameCard(game) {
@@ -66,7 +54,7 @@ function createGameCard(game) {
 
   const price = document.createElement('span');
   price.className = 'game-card__price';
-  price.textContent = `$${(Math.random() * (59.99 - 19.99) + 19.99).toFixed(2)}`;
+  price.textContent = `$${game.id}` // como a API nao tem preço, usa o ID
 
   thumbnail.appendChild(price); // Add price to thumbnail instead of content
   content.appendChild(title);
@@ -93,19 +81,77 @@ function createBanner(game) {
   return banner;
 }
 
+function createCartItem(game) {
+
+  const item = document.createElement('div')
+  item.classList.add('cart-item')
+
+  const itemImg = document.createElement('img')
+  itemImg.alt = game.name
+  itemImg.src = game.background_image
+  itemImg.classList.add('cart-item-image')
+
+  const cartItemInfo = document.createElement('div')
+  cartItemInfo.classList.add('cart-item-info')
+
+  const cartItemTitle = document.createElement('h3')
+  cartItemTitle.textContent = game.name
+  cartItemTitle.classList.add('cart-item-title')
+
+  const cartItemPrice = document.createElement('p')
+  cartItemPrice.textContent = `$${game.id}`
+  cartItemPrice.classList.add('cart-item-price')
+
+  const cartItemRemoveButton = document.createElement('button')
+  cartItemRemoveButton.textContent = 'Remove'
+  cartItemRemoveButton.classList.add('cart-item-remove')
+  cartItemRemoveButton.classList.add('button')
+
+  cartItemInfo.appendChild(cartItemTitle)
+  cartItemInfo.appendChild(cartItemPrice)
+
+  item.appendChild(itemImg)
+  item.appendChild(cartItemInfo)
+  item.appendChild(cartItemRemoveButton)
+
+  return item
+}
+
 async function populatePage() {
   const searchParams = new URLSearchParams(window.location.search);
   const searchText = searchParams.get('search');
-  const gameId = searchParams.get('id')
+  const gameId = searchParams.get('id');
+  const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'))
 
-  if (searchText) {
-    await populateSearchPage(searchText);
-
-  } else if (gameId) {
-    await populateGameDetailsPage(gameId)
+  switch (pagName) {
+    case '/search.html':
+      await populateSearchPage(searchText);
+      break;
     
-  } else {
-    await populateHomePage()
+    case '/game-details.html':
+      await populateGameDetailsPage(gameId)
+      break;
+
+    case '/my-cart.html':
+      await populateCartPage()
+      break;
+
+    case '/index.html':
+      await populateHomePage()
+      break;
+
+    case '/user-profile.html':
+      updateUserProfile();
+      break;
+
+    case '/edit-profile.html':
+      updateUserProfile();
+      handleProfileEdit();
+      break;
+
+    default:
+      await populateHomePage()
+      break;
   }
 }
 
@@ -130,15 +176,30 @@ async function populateGameDetailsPage(gameId) {
   gameImg.alt = game.name
   gameImg.src = game.background_image
   imgDiv.appendChild(gameImg)
-  // coloca as informções escritas na pagina
+  // coloca as informações escritas na pagina
   document.querySelector('.game-details__title').textContent = game.name
-  document.querySelector('.game-details__description').textContent = game.description_raw
+  document.querySelector('.game-details__description').innerHTML = game.description
+  document.querySelector('.game-details__price').textContent = `$${game.id}`
+  document.querySelector('.button').setAttribute('game-id', gameId)
+}
+
+async function populateCartPage() {
+  const cartItems = JSON.parse(localStorage.getItem('cart-items'))
+  const items = document.querySelector('.cart-items')
+
+  cartItems.forEach(async (item) => {
+    const game = await fetchGames({ id: item })
+    const cartItem = createCartItem(game)
+    items.appendChild(cartItem)    
+  })
+
+  // O PREÇO TOTAL FICARA GUARDADO NO LOCALSTORAGE E ESSE NOVO É SOMADO - eu acho :)
 }
 
 async function populateHomePage() {
-  const featuredGames = await fetchFeaturedGames();
-  const topGames = await fetchTopGames();
-  const newReleases = await fetchNewReleases();
+  const featuredGames = await await fetchGames();
+  const topGames = await fetchGames({ ordering: '-rating', dates: '2022-01-01,2022-12-31' });
+  const newReleases = await fetchGames({ ordering: '-released', dates: '2022-01-01,2022-12-31' });
 
   const topGamesContainer = document.querySelector('.grid-container.top-games');
   topGames.forEach((game) => {
@@ -180,7 +241,6 @@ async function populateHomePage() {
   carouselButtonLeft.addEventListener('click', () => {
     moveCarousel(-1);
   });
-
   carouselButtonRight.addEventListener('click', () => {
     moveCarousel(1);
   });
@@ -212,10 +272,24 @@ function onSearchEnter(event) {
 
 function onGameClick(event) {
   const gameId = event.currentTarget.getAttribute('game-id');
-  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`; // Assuming game-details.html is the game details page
+  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`;
 }
 
-// Update this function to handle the new fields
+function addToCart(item) {
+  const gameId = event.target.attributes.getNamedItem('game-id').textContent
+  let cartItems = JSON.parse(localStorage.getItem('cart-items'))
+
+  // TO-DO ------->>>>> NAO COLOCAR SE O JOGO JA ESTIVER NO CARRINHO
+  if (cartItems) {
+    cartItems.push(gameId)
+  } else {
+    cartItems = [gameId]
+  }
+
+  localStorage.setItem('cart-items', JSON.stringify(cartItems))
+  window.location.href = 'my-cart.html'
+}
+
 function updateUserProfile() {
   const userProfile = JSON.parse(localStorage.getItem("userProfile")) || {
     id: 12345,
@@ -242,27 +316,23 @@ function updateUserProfile() {
   }
 }
 
-populatePage();
+function handleProfileEdit() {
 
-updateUserProfile();
-
-const editProfileForm = document.getElementById("editProfileForm");
-if (editProfileForm) { // se estiver na pagina de edição de perfil
   document.getElementById("editProfileForm").addEventListener("submit", (e) => {
     e.preventDefault();
-
+    
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const phone = document.getElementById("phone").value;
     const id = document.getElementById("id").value;
     const isAdmin = document.getElementById("isAdmin").checked;
-
+    
     if (name && email && phone) {
       localStorage.setItem("userProfile", JSON.stringify({ id, name, email, phone, isAdmin }));
       alert("Profile saved successfully.");
-      updateUserProfile();
+      window.location.href = 'user-profile.html';
     } else {
       alert("Please fill in all fields.");
     }
-  });
+  })
 }
