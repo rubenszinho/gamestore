@@ -85,6 +85,7 @@ function createCartItem(game) {
 
   const item = document.createElement('div')
   item.classList.add('cart-item')
+  item.setAttribute('game-price', game.id)
 
   const itemImg = document.createElement('img')
   itemImg.alt = game.name
@@ -106,6 +107,16 @@ function createCartItem(game) {
   cartItemRemoveButton.textContent = 'Remove'
   cartItemRemoveButton.classList.add('cart-item-remove')
   cartItemRemoveButton.classList.add('button')
+  cartItemRemoveButton.setAttribute('game-id', game.id)
+
+  cartItemRemoveButton.addEventListener('click', (event) => {
+    let oldItems = JSON.parse(localStorage.getItem('cart-items'));
+    let newItens = oldItems.filter((item) => {
+      return item !== event.currentTarget.getAttribute('game-id');
+    });
+    localStorage.setItem('cart-items', JSON.stringify(newItens));1
+    window.location.reload();
+  })
 
   cartItemInfo.appendChild(cartItemTitle)
   cartItemInfo.appendChild(cartItemPrice)
@@ -150,7 +161,6 @@ async function populatePage() {
       break;
 
     default:
-      await populateHomePage()
       break;
   }
 }
@@ -186,14 +196,17 @@ async function populateGameDetailsPage(gameId) {
 async function populateCartPage() {
   const cartItems = JSON.parse(localStorage.getItem('cart-items'))
   const items = document.querySelector('.cart-items')
+  let totalPrice = 0;
 
   cartItems.forEach(async (item) => {
     const game = await fetchGames({ id: item })
     const cartItem = createCartItem(game)
-    items.appendChild(cartItem)    
+    items.appendChild(cartItem) 
+    
+    totalPrice = Number(totalPrice) + Number(cartItem.getAttribute('game-price'));
+    document.querySelector('.cart-total-price').innerHTML = `$${totalPrice}`
   })
 
-  // O PREÇO TOTAL FICARA GUARDADO NO LOCALSTORAGE E ESSE NOVO É SOMADO - eu acho :)
 }
 
 async function populateHomePage() {
@@ -276,7 +289,7 @@ function onGameClick(event) {
 }
 
 function addToCart(item) {
-  const gameId = event.target.attributes.getNamedItem('game-id').textContent
+  const gameId = event.currentTarget.getAttribute('game-id');
   let cartItems = JSON.parse(localStorage.getItem('cart-items'))
 
   // TO-DO ------->>>>> NAO COLOCAR SE O JOGO JA ESTIVER NO CARRINHO
