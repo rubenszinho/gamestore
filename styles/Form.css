@@ -3,35 +3,19 @@
     gap: 1rem;
 }
 
-.edit-profile-form input[type="ID"] {
+.edit-profile-form input {
     background-color: var(--card-background-color);
     border: 1px solid var(--card-border-color);
     border-radius: 4px;
     padding: 12px;
     font-size: 14px;
     color: var(--text-color);
-    width: 150px;
+    width: 200px;
 }
 
 
-.edit-profile-form input[type="text"] {
-    background-color: var(--card-background-color);
-    border: 1px solid var(--card-border-color);
-    border-radius: 4px;
-    padding: 12px;
-    font-size: 14px;
-    color: var(--text-color);
-    width: 250;
-}
-
-.edit-profile-form input[type="email"] {
-    background-color: var(--card-background-color);
-    border: 1px solid var(--card-border-color);
-    border-radius: 4px;
-    padding: 12px;
-    font-size: 14px;
-    color: var(--text-color);
-    width: 250;
+.edit-profile-form input[type="checkbox"] {
+    width: auto;
 }
 
 .edit-profile-form:focus {
@@ -42,8 +26,14 @@
 .edit-profile-form label {
     font-weight: bold;
     color: var(--title-color);
+    display:inline-block;
+    width: 60px;
 }
 
+.edit-profile-form button {
+    margin-left: 60px;
+    width: 230px;
+}
 
 .login-container,
 .register-container {
