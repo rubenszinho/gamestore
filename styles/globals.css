@@ -84,8 +84,16 @@ body {
 }
 
 .limit-container {
-    max-width: 1800px;
+    max-width: 1119px;
     margin: auto;
+}
+
+/* Media query para telas maiores que 1790px */
+@media (min-width: 1781px) {
+  .limit-container {
+    /* Definir o max-width para 1790px */
+    max-width: 1780px;
+  }
 }
 
 .title {
