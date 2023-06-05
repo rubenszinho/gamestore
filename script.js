@@ -224,14 +224,16 @@ async function populateCartPage() {
   const items = document.querySelector('.cart-items')
   let totalPrice = 0;
 
-  cartItems.forEach(async (item) => {
-    const game = await fetchGames({ id: item })
-    const cartItem = createCartItem(game)
-    items.appendChild(cartItem) 
-
-    totalPrice = Number(totalPrice) + Number(cartItem.getAttribute('game-price'));
-    document.querySelector('.cart-total-price').innerHTML = `$${totalPrice}`
-  })
+  if (cartItems) {
+    cartItems.forEach(async (item) => {
+      const game = await fetchGames({ id: item })
+      const cartItem = createCartItem(game)
+      items.appendChild(cartItem) 
+      
+      totalPrice = Number(totalPrice) + Number(cartItem.getAttribute('game-price'));
+      document.querySelector('.cart-total-price').innerHTML = `$${totalPrice}`
+    })
+  }
 
 }
 
@@ -318,17 +320,16 @@ function addToCart(event) {
   const gameId = event.currentTarget.getAttribute('game-id');
   let cartItems = JSON.parse(localStorage.getItem('cart-items'))
 
-  if (!cartItems.includes(gameId)) {  
     if (cartItems) {
-      cartItems.push(gameId)
+      if (!cartItems.includes(gameId)) {
+        cartItems.push(gameId)
+      } else {
+        alert('Jogo já está no carrinho')
+      }
     } else {
       cartItems = [gameId]
     }
     localStorage.setItem('cart-items', JSON.stringify(cartItems))
-
-  } else {
-    alert('Jogo já está no carrinho')
-  }
 
   window.location.href = 'my-cart.html'
 }
@@ -385,10 +386,14 @@ function toggleUserProfileLink() {
     var user = JSON.parse(sessionStorage.getItem("user"));
     var userProfileLink = document.getElementById("userProfileLink");
 
-    if (user.isLoggedIn) {
-        userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+    if (user) {
+      if (user.isLoggedIn) {
+          userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+      } else if (!user.isLoggedIn || !user) {
+          userProfileLink.style.display = "none"; // Oculta o link "User Profile"
+      }
     } else {
-        userProfileLink.style.display = "none"; // Oculta o link "User Profile"
+      userProfileLink.style.display = "none"; // Oculta o link "User Profile"
     }
 }
 

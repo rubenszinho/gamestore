@@ -119,22 +119,8 @@
             // Redirecionar para a página de login
             window.location.href = "login.html";
         });
-
-        // Função para exibir ou ocultar o link "User Profile" na navbar
-        function toggleUserProfileLink() {
-            var user = JSON.parse(sessionStorage.getItem("user"));
-            var userProfileLink = document.getElementById("userProfileLink");
-
-            if (user.isLoggedIn) {
-                userProfileLink.style.display = "block"; // Exibe o link "User Profile"
-            } else {
-                userProfileLink.style.display = "none"; // Oculta o link "User Profile"
-            }
-        }
-
-        // Chamada da função ao carregar a página
-        window.addEventListener("load", toggleUserProfileLink);
     </script>
+    <script src="..\script.js"></script>
 </body>
 
 </html>
