@@ -86,7 +86,7 @@
 
             if (loggedInUser) {
                 // Salvar o ID do usuário logado no Session Storage
-                sessionStorage.setItem("loggedInUserId", loggedInUser.id);
+                sessionStorage.setItem("loggedInUserId", JSON.stringify(loggedInUser.id));
 
                 // Redirecionar para a página de perfil do usuário
                 window.location.href = "index.html";
