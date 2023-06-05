@@ -5,15 +5,36 @@ let currentTheme = "light";
 // INICIALIZA A PAGINA ATUAL
 populatePage();
 
-function toggleTheme() {
-  const themeOrder = ["light", "dark"];
-  let index = themeOrder.indexOf(currentTheme);
-  index = (index + 1) % themeOrder.length;
-  currentTheme = themeOrder[index];
-
-  document.documentElement.setAttribute("data-theme", currentTheme);
-  document.querySelector('#theme-toggle')?.setAttribute('aria-label', currentTheme);
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  // Definir um cookie com o tema selecionado que expira em 365 dias
+  document.cookie = `currentTheme=${theme}; expires=${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()}`;
 }
+
+function getTheme() {
+  // Obter o valor do cookie "currentTheme"
+  const cookies = document.cookie.split(";").map(cookie => cookie.trim());
+  for (const cookie of cookies) {
+    if (cookie.startsWith("currentTheme=")) {
+      return cookie.substring("currentTheme=".length);
+    }
+  }
+  return null;
+}
+
+function toggleTheme() {
+  const currentTheme = getTheme();
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+  setTheme(newTheme);
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+  const currentTheme = getTheme();
+  if (currentTheme) {
+    setTheme(currentTheme);
+  }
+});
+
 
 async function fetchGames(options = {}) {
   const { search = '', ordering = '', dates = '', id= '' } = options;
@@ -358,6 +379,22 @@ function handleProfileEdit() {
     }
   })
 }
+
+// Função para exibir ou ocultar o link "User Profile" na navbar
+function toggleUserProfileLink() {
+    var user = JSON.parse(sessionStorage.getItem("user"));
+    var userProfileLink = document.getElementById("userProfileLink");
+
+    if (user.isLoggedIn) {
+        userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+    } else {
+        userProfileLink.style.display = "none"; // Oculta o link "User Profile"
+    }
+}
+
+// Chamada da função ao carregar a página
+window.addEventListener("load", toggleUserProfileLink);
+
 
 function handleCheckout() { 
   

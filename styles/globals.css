@@ -75,8 +75,17 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    height: 100vh;
     background-color: var(--background-color);
     color: var(--text-color);
+}
+
+.content {
+    min-height: calc(100% - 190px);
+}
+
+footer {
+    height: 150px;
 }
 
 .container {

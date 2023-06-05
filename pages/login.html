@@ -10,37 +10,42 @@
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-items">
-            <a href="login.html">Login</a>
-            <a href="index.html">Home</a>
-            <a href="search.html">Category</a>
-            <a href="my-cart.html">My Cart</a>
-            <a href="user-profile.html">User Profile</a>
-        </div>
+    <div class="content">
+        <div class="navbar">
+            <div class="nav-items">
+                <a href="login.html">Login</a>
+                <a href="index.html">Home</a>
+                <a href="search.html">Category</a>
+                <a href="my-cart.html">My Cart</a>
+                <a id="userProfileLink" href="user-profile.html">User Profile</a>
+            </div>
 
-        <div class="search-container">
-            <input class="search-input" type="text" placeholder="Search games..." onkeydown="onSearchEnter(event)" />
-            <button class="search-button" onclick="onSearchClick()">Search</button>
+            <div class="search-container">
+                <input class="search-input" type="text" placeholder="Search games..." onkeydown="onSearchEnter(event)" />
+                <button class="search-button" onclick="onSearchClick()">Search</button>
+            </div>
+            <div>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                <span class="material-symbols-outlined">brightness_medium</span>
+                </button>
+            </div>
         </div>
-        <div>
-            <button class="theme-toggle" onclick="toggleTheme()">
-            <span class="material-symbols-outlined">brightness_medium</span>
-            </button>
+        <div class="login-container">
+            <h1 class="title">Login</h1>
+            <form id="loginForm" class="auth-form">
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="button">Login</button>
+            </form>
+            <p>Don't have an account? <a href="register.html">Register here</a></p>
         </div>
-    </div>
-    <div class="login-container">
-        <h1 class="title">Login</h1>
-        <form id="loginForm" class="auth-form">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Enter your email" required>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password" required>
-
-            <button type="submit" class="button">Login</button>
-        </form>
-        <p>Don't have an account? <a href="register.html">Register here</a></p>
     </div>
 
     <footer>
@@ -63,11 +68,41 @@
         </div>
     </footer>
 
-    <script src="..\script.js">
-        document.getElementById("loginForm").addEventListener("submit", (e) => {
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
             e.preventDefault();
-            window.location.href = "index.html";
+
+            // Obter os valores do formulário
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+
+            // Verificar se os dados do usuário correspondem aos dados armazenados no Session Storage
+            var storedUser = JSON.parse(sessionStorage.getItem("user"));
+            if (storedUser && email === storedUser.email && password === storedUser.password) {
+                // Login bem-sucedido
+                storedUser.isLoggedIn = true;
+                sessionStorage.setItem("user", JSON.stringify(storedUser));
+                window.location.href = "index.html";
+            } else {
+                // Credenciais inválidas
+                alert("Invalid email or password. Please try again.");
+            }
         });
+
+        // Função para exibir ou ocultar o link "User Profile" na navbar
+        function toggleUserProfileLink() {
+            var user = JSON.parse(sessionStorage.getItem("user"));
+            var userProfileLink = document.getElementById("userProfileLink");
+
+            if (user.isLoggedIn) {
+                userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+            } else {
+                userProfileLink.style.display = "none"; // Oculta o link "User Profile"
+            }
+        }
+
+        // Chamada da função ao carregar a página
+        window.addEventListener("load", toggleUserProfileLink);
     </script>
 </body>
 

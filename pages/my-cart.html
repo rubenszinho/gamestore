@@ -10,24 +10,25 @@
 </head>
 
 <body>
-  <div class="navbar">
-    <div class="nav-items">
-      <a href="login.html">Login</a>
-      <a href="index.html">Home</a>
-      <a href="search.html">Category</a>
-      <a href="my-cart.html">My Cart</a>
-      <a href="user-profile.html">User Profile</a>
+  <div class="content">
+    <div class="navbar">
+      <div class="nav-items">
+        <a href="login.html">Login</a>
+        <a href="index.html">Home</a>
+        <a href="search.html">Category</a>
+        <a href="my-cart.html">My Cart</a>
+        <a id="userProfileLink" href="user-profile.html">User Profile</a>
+      </div>
+      <div class="search-container">
+        <input class="search-input" type="text" placeholder="Search games..." onkeydown="onSearchEnter(event)" />
+        <button class="search-button" onclick="onSearchClick()">Search</button>
+      </div>
+      <div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <span class="material-symbols-outlined">brightness_medium</span>
+        </button>
+      </div>
     </div>
-    <div class="search-container">
-      <input class="search-input" type="text" placeholder="Search games..." onkeydown="onSearchEnter(event)" />
-      <button class="search-button" onclick="onSearchClick()">Search</button>
-    </div>
-    <div>
-      <button class="theme-toggle" onclick="toggleTheme()">
-        <span class="material-symbols-outlined">brightness_medium</span>
-      </button>
-    </div>
-  </div>
 
   <div class="container">
     <h1 class="title">My Cart</h1>

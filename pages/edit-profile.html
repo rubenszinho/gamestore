@@ -10,52 +10,54 @@
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-items">
-            <a href="login.html">Login</a>
-            <a href="index.html">Home</a>
-            <a href="search.html">Category</a>
-            <a href="my-cart.html">My Cart</a>
-            <a href="user-profile.html">User Profile</a>
+    <div class="content">
+        <div class="navbar">
+            <div class="nav-items">
+                <a href="login.html">Login</a>
+                <a href="index.html">Home</a>
+                <a href="search.html">Category</a>
+                <a href="my-cart.html">My Cart</a>
+                <a href="user-profile.html">User Profile</a>
+            </div>
+            <div class="search-container">
+                <input class="search-input" type="text" placeholder="Search games..." onkeydown="onSearchEnter(event)" />
+                <button class="search-button" onclick="onSearchClick()">Search</button>
+            </div>
+            <div>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                <span class="material-symbols-outlined">brightness_medium</span>
+                </button>
+            </div>
         </div>
-        <div class="search-container">
-            <input class="search-input" type="text" placeholder="Search games..." onkeydown="onSearchEnter(event)" />
-            <button class="search-button" onclick="onSearchClick()">Search</button>
-        </div>
-        <div>
-            <button class="theme-toggle" onclick="toggleTheme()">
-            <span class="material-symbols-outlined">brightness_medium</span>
-            </button>
-        </div>
-    </div>
 
-    <div class="container">
-        <h1 class="title">Edit Profile</h1>
-        <form id="editProfileForm" class="edit-profile-form">
-            <div>
-                <label for="id">ID</label>
-                <input type="text" id="id" disabled />
-            </div>
-            <div>
-                <label for="isAdmin">Admin</label>
-                <input type="checkbox" id="isAdmin" disabled />
-            </div>
-            <div>
-                <label for="name">Name</label>
-                <input type="text" id="name" class="edit-profile-input" required />
-            </div>
-            <div>
-                <label for="email">Email</label>
-                <input type="email" id="email" class="edit-profile-input" required />
-            </div>
-            <div>
-                <label for="phone">Phone</label>
-                <input type="text" id="phone" class="edit-profile-input" required />
-            </div>
-            <div>
-                <button type="submit" class="button">Save</button>
-            </div>
-        </form>
+        <div class="container">
+            <h1 class="title">Edit Profile</h1>
+            <form id="editProfileForm" class="edit-profile-form">
+                <div>
+                    <label for="id">ID</label>
+                    <input type="text" id="id" disabled />
+                </div>
+                <div>
+                    <label for="isAdmin">Admin</label>
+                    <input type="checkbox" id="isAdmin" disabled />
+                </div>
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <button type="submit" class="button">Save</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <footer>
@@ -77,7 +79,43 @@
             </div>
         </div>
     </footer>
-    <script src="..\script.js"></script>
+
+    <script>
+        // Verificar se há um usuário armazenado no Session Storage
+        var user = JSON.parse(sessionStorage.getItem("user"));
+
+        // Verificar se o usuário está logado
+        if (user) {
+            // Preencher os campos do formulário com os dados do usuário
+            document.getElementById("id").value = user.id;
+            document.getElementById("isAdmin").checked = user.isAdmin;
+            document.getElementById("name").value = user.name;
+            document.getElementById("email").value = user.email;
+            document.getElementById("phone").value = user.phone;
+        } else {
+            // Redirecionar para a página de login se o usuário não estiver logado
+            window.location.href = "login.html";
+        }
+
+        // Lidar com o envio do formulário
+        document.getElementById("editProfileForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            // Obter os valores atualizados do formulário
+            var updatedName = document.getElementById("name").value;
+            var updatedEmail = document.getElementById("email").value;
+            var updatedPhone = document.getElementById("phone").value;
+
+            // Atualizar os dados do usuário no Session Storage
+            user.name = updatedName;
+            user.email = updatedEmail;
+            user.phone = updatedPhone;
+            sessionStorage.setItem("user", JSON.stringify(user));
+
+            // Redirecionar para a página de perfil do usuário
+            window.location.href = "user-profile.html";
+        });
+    </script>
 </body>
 
 </html>
