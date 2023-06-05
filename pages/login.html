@@ -40,8 +40,8 @@
                 <div>
                     <label for="password">Password</label>
                     <input type="password" id="password" placeholder="Enter your password" required>
+                    <a href="forget-password.html">Forget password?</a>
                 </div>
-
                 <button type="submit" class="button">Login</button>
             </form>
             <p>Don't have an account? <a href="register.html">Register here</a></p>
@@ -76,15 +76,21 @@
             var email = document.getElementById("email").value;
             var password = document.getElementById("password").value;
 
-            // Verificar se os dados do usuário correspondem aos dados armazenados no Session Storage
-            var storedUser = JSON.parse(sessionStorage.getItem("user"));
-            if (storedUser && email === storedUser.email && password === storedUser.password) {
-                // Login bem-sucedido
-                storedUser.isLoggedIn = true;
-                sessionStorage.setItem("user", JSON.stringify(storedUser));
+            // Obter a matriz de usuários do Session Storage
+            var users = JSON.parse(sessionStorage.getItem("users")) || [];
+
+            // Verificar se existe um usuário com o email e senha fornecidos
+            var loggedInUser = users.find(function (user) {
+                return user.email === email && user.password === password;
+            });
+
+            if (loggedInUser) {
+                // Salvar o ID do usuário logado no Session Storage
+                sessionStorage.setItem("loggedInUserId", loggedInUser.id);
+
+                // Redirecionar para a página de perfil do usuário
                 window.location.href = "index.html";
             } else {
-                // Credenciais inválidas
                 alert("Invalid email or password. Please try again.");
             }
         });

@@ -81,19 +81,33 @@
     </footer>
 
     <script>
-        // Verificar se há um usuário armazenado no Session Storage
-        var user = JSON.parse(sessionStorage.getItem("user"));
+        // Verificar se há um usuário logado no Session Storage
+        var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+        // Obter a lista de usuários do Session Storage
+        var userList = JSON.parse(sessionStorage.getItem("users"));
 
         // Verificar se o usuário está logado
-        if (user) {
-            // Preencher os campos do formulário com os dados do usuário
-            document.getElementById("id").value = user.id;
-            document.getElementById("isAdmin").checked = user.isAdmin;
-            document.getElementById("name").value = user.name;
-            document.getElementById("email").value = user.email;
-            document.getElementById("phone").value = user.phone;
+        if (loggedInUserId != null) {
+            // Procurar o usuário logado na lista de usuários
+            var user = userList.find(function (user) {
+                return user.id == loggedInUserId;
+            });
+
+            // Verificar se o usuário foi encontrado
+            if (user) {
+                // Preencher os campos do formulário com os dados do usuário
+                document.getElementById("id").value = user.id;
+                document.getElementById("isAdmin").checked = user.isAdmin;
+                document.getElementById("name").value = user.name;
+                document.getElementById("email").value = user.email;
+                document.getElementById("phone").value = user.phone;
+            } else {
+                // Redirecionar para a página de login se o usuário não for encontrado
+                window.location.href = "login.html";
+            }
         } else {
-            // Redirecionar para a página de login se o usuário não estiver logado
+            // Redirecionar para a página de login se o usuário não estiver logado ou a lista de usuários estiver vazia
             window.location.href = "login.html";
         }
 
@@ -106,11 +120,27 @@
             var updatedEmail = document.getElementById("email").value;
             var updatedPhone = document.getElementById("phone").value;
 
-            // Atualizar os dados do usuário no Session Storage
-            user.name = updatedName;
-            user.email = updatedEmail;
-            user.phone = updatedPhone;
-            sessionStorage.setItem("user", JSON.stringify(user));
+            // Atualizar os dados do usuário na lista de usuários
+            var updatedUserIndex = userList.findIndex(function(user) {
+                return user.id == loggedInUserId;
+            });
+
+            if (updatedUserIndex !== -1) {
+                userList[updatedUserIndex].name = updatedName;
+                userList[updatedUserIndex].email = updatedEmail;
+                userList[updatedUserIndex].phone = updatedPhone;
+                sessionStorage.setItem("users", JSON.stringify(userList));
+
+                // Atualizar o usuário no Session Storage, se necessário
+                var userInSessionStorage = JSON.parse(sessionStorage.getItem("user"));
+
+                if (userInSessionStorage && userInSessionStorage.id === loggedInUserId) {
+                    userInSessionStorage.name = updatedName;
+                    userInSessionStorage.email = updatedEmail;
+                    userInSessionStorage.phone = updatedPhone;
+                    sessionStorage.setItem("user", JSON.stringify(userInSessionStorage));
+                }
+            }
 
             // Redirecionar para a página de perfil do usuário
             window.location.href = "user-profile.html";

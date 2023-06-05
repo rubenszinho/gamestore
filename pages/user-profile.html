@@ -68,29 +68,41 @@
   </footer>
 
   <script>
-      // Verificar se há um usuário armazenado no Session Storage
-      var user = JSON.parse(sessionStorage.getItem("user"));
+      window.addEventListener("load", function () {
+          // Obter o usuário logado do Session Storage
+          var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
-      // Verificar se o usuário está logado
-      if (user) {
-          // Preencher os elementos HTML com os dados do usuário
-          document.getElementById("userId").textContent = "ID: " + user.id;
-          document.getElementById("isAdmin").textContent = "Admin: " + (user.isAdmin ? "Yes" : "No");
-          document.getElementById("userName").textContent = user.name;
-          document.getElementById("userEmail").textContent = user.email;
-          document.getElementById("userPhone").textContent = "Phone: " + user.phone;
-      } else {
-          // Redirecionar para a página de login se o usuário não estiver logado
-          window.location.href = "login.html";
-      }
+          // Obter a lista de usuários do Session Storage
+          var userList = JSON.parse(sessionStorage.getItem("users"));
+
+          // Verificar se o usuário está logado
+          if (loggedInUserId != null) {
+              // Procurar o usuário logado na lista de usuários
+              var user = userList.find(function (user) {
+                  return user.id == loggedInUserId;
+              });
+
+              if (user) {
+                  // Exibir as informações do usuário
+                  document.getElementById("userId").textContent = user.id;
+                  document.getElementById("isAdmin").textContent = user.isAdmin;
+                  document.getElementById("userName").textContent = user.name;
+                  document.getElementById("userEmail").textContent = user.email;
+                  document.getElementById("userPhone").textContent = user.phone;
+              } else {
+                  // Usuário não encontrado, redirecionar para a página de login
+                  window.location.href = "login.html";
+              }
+          } else {
+              // Redirecionar para a página de login
+              window.location.href = "login.html";
+          }
+      });
+
 
       function logout() {
-        // Atualizar a propriedade isLoggedIn para false
-        var user = JSON.parse(sessionStorage.getItem("user"));
-        user.isLoggedIn = false;
-
         // Salvar o usuário atualizado no Session Storage
-        sessionStorage.setItem("user", JSON.stringify(user));
+        sessionStorage.setItem("loggedInUserId", null);
 
         // Redirecionar para a página de login
         window.location.href = "login.html";
