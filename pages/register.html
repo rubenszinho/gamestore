@@ -53,6 +53,11 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
+                
+                <div>
+                    <label for="password">Check password</label>
+                    <input type="password" id="check-password" placeholder="Enter your password again" required>
+                </div>
 
                 <button type="submit" class="button">Register</button>
             </form>
@@ -89,6 +94,13 @@
             var email = document.getElementById("email").value;
             var phone = document.getElementById("phone").value;
             var password = document.getElementById("password").value;
+            var checkPassword = document.getElementById("check-password").value;
+
+            // Verificar se as senhas são iguais
+            if (password !== checkPassword) {
+                alert("Passwords do not match."); // Exibir alerta de erro
+                return; // Abortar o envio do formulário
+            }
 
             // Criar um objeto de usuário
             var user = {
