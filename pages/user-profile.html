@@ -35,11 +35,11 @@
       <div class="user-info">
         <img class="user-avatar" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="User Avatar">
         <div>
-          <p class="user-id">ID: 12345</p>
-          <p class="user-isAdmin">Admin: No</p>
-          <h2 class="user-name">Rubens</h2>
-          <p class="user-email">rubenszinho@example.com</p>
-          <p class="user-phone">Phone: +1 (555) 123-4567</p>
+          <p class="user-id" id="userId">ID: </p>
+          <p class="user-isAdmin" id="isAdmin">Admin: </p>
+          <h2 class="user-name" id="userName"></h2>
+          <p class="user-email" id="userEmail"></p>
+          <p class="user-phone" id="userPhone">Phone: </p>
         </div>
       </div>
       <a class="button" href="edit-profile.html">Edit Profile</a>
@@ -65,7 +65,24 @@
       </div>
     </div>
   </footer>
-  <script src="..\script.js"></script>
+
+  <script>
+      // Verificar se há um usuário armazenado no Session Storage
+      var user = JSON.parse(sessionStorage.getItem("user"));
+
+      // Verificar se o usuário está logado
+      if (user) {
+          // Preencher os elementos HTML com os dados do usuário
+          document.getElementById("userId").textContent = "ID: " + user.id;
+          document.getElementById("isAdmin").textContent = "Admin: " + (user.isAdmin ? "Yes" : "No");
+          document.getElementById("userName").textContent = user.name;
+          document.getElementById("userEmail").textContent = user.email;
+          document.getElementById("userPhone").textContent = "Phone: " + user.phone;
+      } else {
+          // Redirecionar para a página de login se o usuário não estiver logado
+          window.location.href = "login.html";
+      }
+  </script>
 </body>
 
 </html>

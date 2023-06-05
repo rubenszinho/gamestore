@@ -79,7 +79,43 @@
             </div>
         </div>
     </footer>
-    <script src="..\script.js"></script>
+
+    <script>
+        // Verificar se há um usuário armazenado no Session Storage
+        var user = JSON.parse(sessionStorage.getItem("user"));
+
+        // Verificar se o usuário está logado
+        if (user) {
+            // Preencher os campos do formulário com os dados do usuário
+            document.getElementById("id").value = user.id;
+            document.getElementById("isAdmin").checked = user.isAdmin;
+            document.getElementById("name").value = user.name;
+            document.getElementById("email").value = user.email;
+            document.getElementById("phone").value = user.phone;
+        } else {
+            // Redirecionar para a página de login se o usuário não estiver logado
+            window.location.href = "login.html";
+        }
+
+        // Lidar com o envio do formulário
+        document.getElementById("editProfileForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            // Obter os valores atualizados do formulário
+            var updatedName = document.getElementById("name").value;
+            var updatedEmail = document.getElementById("email").value;
+            var updatedPhone = document.getElementById("phone").value;
+
+            // Atualizar os dados do usuário no Session Storage
+            user.name = updatedName;
+            user.email = updatedEmail;
+            user.phone = updatedPhone;
+            sessionStorage.setItem("user", JSON.stringify(user));
+
+            // Redirecionar para a página de perfil do usuário
+            window.location.href = "user-profile.html";
+        });
+    </script>
 </body>
 
 </html>
