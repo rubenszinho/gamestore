@@ -402,6 +402,11 @@ function handleCheckout() {
     window.location.href = "login.html";
   }
   
+  if (!document.querySelector('.cart-item')) {
+    alert('Voce não possui nenhum item no carrinho.');
+    return;
+  }
+
   const paymentMethods = "<h2>Payments</h2><ul id='list-checkboxes' class='checkout-options'><li class='type-card'><input type='checkbox' value='card'><label>Credit/Debit Card</label></li><li class='type-paypal'><input type='checkbox' value='paypal'><label>Paypal</label></li><li class='type-pix'><input type='checkbox' value='pix'><label>Pix</label></li></ul>"
 
   document.querySelector('.checkout-options').innerHTML = paymentMethods;
