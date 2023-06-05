@@ -43,6 +43,7 @@
         </div>
       </div>
       <a class="button" href="edit-profile.html">Edit Profile</a>
+      <button class="button" onclick="logout()" >Log out</button>
     </div>
   </div>
 
@@ -81,6 +82,18 @@
       } else {
           // Redirecionar para a página de login se o usuário não estiver logado
           window.location.href = "login.html";
+      }
+
+      function logout() {
+        // Atualizar a propriedade isLoggedIn para false
+        var user = JSON.parse(sessionStorage.getItem("user"));
+        user.isLoggedIn = false;
+
+        // Salvar o usuário atualizado no Session Storage
+        sessionStorage.setItem("user", JSON.stringify(user));
+
+        // Redirecionar para a página de login
+        window.location.href = "login.html";
       }
   </script>
 </body>

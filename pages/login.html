@@ -17,7 +17,7 @@
                 <a href="index.html">Home</a>
                 <a href="search.html">Category</a>
                 <a href="my-cart.html">My Cart</a>
-                <a href="user-profile.html">User Profile</a>
+                <a id="userProfileLink" href="user-profile.html">User Profile</a>
             </div>
 
             <div class="search-container">
@@ -80,13 +80,29 @@
             var storedUser = JSON.parse(sessionStorage.getItem("user"));
             if (storedUser && email === storedUser.email && password === storedUser.password) {
                 // Login bem-sucedido
-                sessionStorage.setItem("loggedIn", "true");
+                storedUser.isLoggedIn = true;
+                sessionStorage.setItem("user", JSON.stringify(storedUser));
                 window.location.href = "index.html";
             } else {
                 // Credenciais inválidas
                 alert("Invalid email or password. Please try again.");
             }
         });
+
+        // Função para exibir ou ocultar o link "User Profile" na navbar
+        function toggleUserProfileLink() {
+            var user = JSON.parse(sessionStorage.getItem("user"));
+            var userProfileLink = document.getElementById("userProfileLink");
+
+            if (user.isLoggedIn) {
+                userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+            } else {
+                userProfileLink.style.display = "none"; // Oculta o link "User Profile"
+            }
+        }
+
+        // Chamada da função ao carregar a página
+        window.addEventListener("load", toggleUserProfileLink);
     </script>
 </body>
 
