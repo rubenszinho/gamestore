@@ -381,17 +381,11 @@ function handleProfileEdit() {
   })
 }
 
-// Função para exibir ou ocultar o link "User Profile" na navbar
 function toggleUserProfileLink() {
-    var user = JSON.parse(sessionStorage.getItem("user"));
-    var userProfileLink = document.getElementById("userProfileLink");
+    var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
-    if (user) {
-      if (user.isLoggedIn) {
-          userProfileLink.style.display = "block"; // Exibe o link "User Profile"
-      } else if (!user.isLoggedIn || !user) {
-          userProfileLink.style.display = "none"; // Oculta o link "User Profile"
-      }
+    if (loggedInUserId != null) {
+        userProfileLink.style.display = "block"; // Exibe o link "User Profile"
     } else {
       userProfileLink.style.display = "none"; // Oculta o link "User Profile"
     }
