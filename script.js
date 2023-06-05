@@ -396,6 +396,11 @@ window.addEventListener("load", toggleUserProfileLink);
 
 
 function handleCheckout() { 
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+  if (loggedInUserId == null) {
+    window.location.href = "login.html";
+  }
   
   const paymentMethods = "<h2>Payments</h2><ul id='list-checkboxes' class='checkout-options'><li class='type-card'><input type='checkbox' value='card'><label>Credit/Debit Card</label></li><li class='type-paypal'><input type='checkbox' value='paypal'><label>Paypal</label></li><li class='type-pix'><input type='checkbox' value='pix'><label>Pix</label></li></ul>"
 
