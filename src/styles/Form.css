@@ -29,6 +29,10 @@
     width: 230px;
 }
 
+.auth-form div {
+    width: fit-content;
+}
+
 .login-container,
 .register-container,
 .recovery-container {

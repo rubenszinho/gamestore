@@ -138,7 +138,7 @@ function createCartItem(game) {
     let newItens = oldItems.filter((item) => {
       return item !== event.currentTarget.getAttribute('game-id');
     });
-    localStorage.setItem('cart-items', JSON.stringify(newItens));1
+    localStorage.setItem('cart-items', JSON.stringify(newItens));
     window.location.reload();
   })
 
@@ -159,32 +159,33 @@ async function populatePage() {
   const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'))
 
   switch (pagName) {
-    case '/search.html':
+    case '/search':
       await populateSearchPage(searchText);
       break;
     
-    case '/game-details.html':
+    case '/game-details':
       await populateGameDetailsPage(gameId)
       break;
 
-    case '/my-cart.html':
+    case '/my-cart':
       await populateCartPage()
       break;
 
-    case '/index.html':
+    case '/index':
       await populateHomePage()
       break;
 
-    case '/user-profile.html':
+    case '/user-profile':
       updateUserProfile();
       break;
 
-    case '/edit-profile.html':
+    case '/edit-profile':
       updateUserProfile();
       handleProfileEdit();
       break;
 
     default:
+      await populateHomePage()
       break;
   }
 }
@@ -238,7 +239,7 @@ async function populateCartPage() {
 }
 
 async function populateHomePage() {
-  const featuredGames = await await fetchGames();
+  const featuredGames = await fetchGames();
   const topGames = await fetchGames({ ordering: '-rating', dates: '2022-01-01,2022-12-31' });
   const newReleases = await fetchGames({ ordering: '-released', dates: '2022-01-01,2022-12-31' });
 
@@ -292,7 +293,7 @@ function onSearchClick() {
   const searchText = searchInput.value.trim();
 
   if (searchText) {
-    window.location.href = `search.html?search=${encodeURIComponent(searchText)}`;
+    window.location.href = `/search?search=${encodeURIComponent(searchText)}`;
   } else {
     alert('Please enter a search term.');
   }
@@ -304,7 +305,7 @@ function onSearchEnter(event) {
     const searchText = searchInput.value.trim();
 
     if (searchText) {
-      window.location.href = `search.html?search=${encodeURIComponent(searchText)}`;
+      window.location.href = `/search?search=${encodeURIComponent(searchText)}`;
     } else {
       alert('Please enter a search term.');
     }
@@ -313,7 +314,7 @@ function onSearchEnter(event) {
 
 function onGameClick(event) {
   const gameId = event.currentTarget.getAttribute('game-id');
-  window.location.href = `game-details.html?id=${encodeURIComponent(gameId)}`;
+  window.location.href = `/game-details?id=${encodeURIComponent(gameId)}`;
 }
 
 function addToCart(event) {
@@ -331,32 +332,48 @@ function addToCart(event) {
     }
     localStorage.setItem('cart-items', JSON.stringify(cartItems))
 
-  window.location.href = 'my-cart.html'
+  window.location.href = '/my-cart'
 }
 
 function updateUserProfile() {
-  const userProfile = JSON.parse(localStorage.getItem("userProfile")) || {
-    id: 12345,
-    name: "Rubens",
-    email: "rubenszinho@example.com",
-    phone: "+1 (555) 123-4567",
-    isAdmin: false,
-  };
+  // Verificar se há um usuário logado no Session Storage
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
-  if (document.querySelector(".user-name")) { // se estiver na pagina de perfil
-    document.querySelector(".user-name").textContent = userProfile.name;
-    document.querySelector(".user-email").textContent = userProfile.email;
-    document.querySelector(".user-id").textContent = `ID: ${userProfile.id}`;
-    document.querySelector(".user-phone").textContent = `Phone: ${userProfile.phone}`;
-    document.querySelector(".user-isAdmin").textContent = `Admin: ${userProfile.isAdmin ? "Yes" : "No"}`;
-  }
+  // Obter a lista de usuários do Session Storage
+  var userList = JSON.parse(sessionStorage.getItem("users"));
 
-  if (document.getElementById("name")) { // se estiver na pagina de edição de perfil
-    document.getElementById("name").value = userProfile.name;
-    document.getElementById("email").value = userProfile.email;
-    document.getElementById("id").value = userProfile.id;
-    document.getElementById("phone").value = userProfile.phone;
-    document.getElementById("isAdmin").checked = userProfile.isAdmin;
+  // Verificar se o usuário está logado
+  if (loggedInUserId != null) {
+      // Procurar o usuário logado na lista de usuários
+      var user = userList.find(function (user) {
+          return user.id == loggedInUserId;
+      });
+
+      // Verificar se o usuário foi encontrado
+      if (user) {
+          // Preencher os campos do formulário com os dados do usuário
+          if (document.querySelector(".user-name")) { // se estiver na pagina de perfil
+            document.getElementById(".user-id").value = user.id;
+            document.getElementById(".user-isAdmin").checked = user.isAdmin;
+            document.getElementById(".user-name").value = user.name;
+            document.getElementById(".user-email").value = user.email;
+            document.getElementById(".user-phone").value = user.phone;
+          }
+
+          if (document.getElementById("name")) { // se estiver na pagina de edição de perfil
+            document.getElementById("id").value = user.id;
+            document.getElementById("isAdmin").checked = user.isAdmin;
+            document.getElementById("name").value = user.name;
+            document.getElementById("email").value = user.email;
+            document.getElementById("phone").value = user.phone;
+          }
+      } else {
+          // Redirecionar para a página de login se o usuário não for encontrado
+          window.location.href = "/login";
+      }
+  } else {
+      // Redirecionar para a página de login se o usuário não estiver logado ou a lista de usuários estiver vazia
+      window.location.href = "/login";
   }
 }
 
@@ -372,9 +389,9 @@ function handleProfileEdit() {
     const isAdmin = document.getElementById("isAdmin").checked;
     
     if (name && email && phone) {
-      localStorage.setItem("userProfile", JSON.stringify({ id, name, email, phone, isAdmin }));
+      sessionStorage.setItem("userProfile", JSON.stringify({ id, name, email, phone, isAdmin }));
       alert("Profile saved successfully.");
-      window.location.href = 'user-profile.html';
+      window.location.href = '/user-profile';
     } else {
       alert("Please fill in all fields.");
     }
@@ -391,23 +408,63 @@ function toggleUserProfileLink() {
     }
 }
 
+function toggleAdminLink() {
+    adminLink.style.display = "none"; // Oculta o link "User Profile"
+    var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+    // Obter a lista de usuários do session Storage
+    var userList = JSON.parse(sessionStorage.getItem("users"));
+
+    // Verificar se o usuário está logado
+    if (loggedInUserId != null) {
+        // Procurar o usuário logado na lista de usuários
+        var user = userList.find(function (user) {
+            return user.id == loggedInUserId;
+        });
+
+        // Verificar se o usuário foi encontrado
+        if (user) {
+          // verificar se o usuario e admin
+          if(user.isAdmin){
+            adminLink.style.display = "block"; // Exibe o link "User Profile"
+          }
+        }
+    }
+}
+
 // Chamada da função ao carregar a página
 window.addEventListener("load", toggleUserProfileLink);
+window.addEventListener("load", toggleAdminLink);
 
 
 function handleCheckout() { 
   var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
   if (loggedInUserId == null) {
-    window.location.href = "login.html";
+    window.location.href = "/login";
   }
   
   if (!document.querySelector('.cart-item')) {
     alert('Voce não possui nenhum item no carrinho.');
-    window.location.href = "index.html";
+    window.location.href = "/index";
   }
 
-  const paymentMethods = "<h2>Payments</h2><ul id='list-checkboxes' class='checkout-options'><li class='type-card'><input type='checkbox' value='card'><label>Credit/Debit Card</label></li><li class='type-paypal'><input type='checkbox' value='paypal'><label>Paypal</label></li><li class='type-pix'><input type='checkbox' value='pix'><label>Pix</label></li></ul>"
+  const paymentMethods = `
+  <h2>Payments</h2>
+  <ul id='list-checkboxes' class='checkout-options'>
+    <li class='type-card'>
+      <input type='checkbox' value='card'>
+      <label>Credit/Debit Card</label>
+    </li>
+    <li class='type-paypal'>
+      <input type='checkbox' value='paypal'>
+      <label>Paypal</label>
+    </li>
+    <li class='type-pix'>
+      <input type='checkbox' value='pix'>
+      <label>Pix</label>
+    </li>
+  </ul>`;
 
   document.querySelector('.checkout-options').innerHTML = paymentMethods;
 
@@ -449,7 +506,25 @@ function showPaymentMethod(checkbox) {
 }
 
 function showCardMethod() {
-  const cardMethod = '<form id="checkout-form" class="checkout-info-forms"><img src="../assets/cartao.png" alt="cartao"><label for="cardNumber">Card´s Number:</label><input type="text" id="cardNumber" placeholder="1234 2345 3456 4567" required><br><label for="expirationDate">Expiration Date:</label><input type="text" id="expirationDate" placeholder="MM/AA" required><br><label for="CVC-CVV">CVC/CVV:</label><input type="text" id="CVC-CVV" placeholder="123" required><br><label for="CardName">Card´s Name</label><input type="text" id="CardName" placeholder="Example Example" required><button type="submit" class="button">Confirm</button></form>';
+  const cardMethod = `
+  <form id="checkout-form" class="checkout-info-forms">
+    <img src="../../public/assets/cartao.png" alt="cartao">
+    <label for="cardNumber">Card´s Number:</label>
+    <input type="text" id="cardNumber" placeholder="1234 2345 3456 4567" required>
+    <br>
+
+    <label for="expirationDate">Expiration Date:</label>
+    <input type="text" id="expirationDate" placeholder="MM/AA" required>
+    <br>
+
+    <label for="CVC-CVV">CVC/CVV:</label>
+    <input type="text" id="CVC-CVV" placeholder="123" required>
+    <br>
+
+    <label for="CardName">Card´s Name</label>
+    <input type="text" id="CardName" placeholder="Example Example" required>
+    <button type="submit" class="button">Confirm</button>
+  </form>`;
 
   document.querySelector('.checkout-info').innerHTML = cardMethod;
 
@@ -460,7 +535,13 @@ function showCardMethod() {
 }
 
 function showPixMethod() {
-  const pixMethod = '<div class="checkout-info-pix">  <img src="../assets/qrcode.png" alt="qrcode">  <p>Pix Copia e Cola:</p>  <input id="pix-copia-cola" type="text" value="DNWUQODNFQUOFBPQWbEWYCFUBKFBECWYFBWUCFBWCBFW@gamestore.net"    disabled><button class="button" id="copyButton">Copy</button></div>';
+  const pixMethod = `
+  <div class="checkout-info-pix">
+    <img src="../../public/assets/qrcode.png" alt="qrcode">
+    <p>Pix Copia e Cola:</p>
+    <input id="pix-copia-cola" type="text" value="DNWUQODNFQUOFBPQWbEWYCFUBKFBECWYFBWUCFBWCBFW@gamestore.net"    disabled>
+    <button class="button" id="copyButton">Copy</button>
+  </div>`;
 
   document.querySelector('.checkout-info').innerHTML = pixMethod;
 
@@ -474,7 +555,13 @@ function showPixMethod() {
 }
 
 function showPaypalMethod() {
-  const paypalMethod = '<div class="checkout-info-paypal">  <a href="https://paypal.com" target="_blank">    <img class="checkout-info-paypal-img" src="../assets/paypal.png" alt="paypal-site" href="https://paypal.com">  </a>  <p>PayPal transactions are authorized through the PayPal website. Click in the logo above to open a new browser    window and start the transaction.<br><br>    Please review your order before go to the website.  </p></div>'
+  const paypalMethod = `
+  <div class="checkout-info-paypal">
+    <a href="https://paypal.com" target="_blank">
+     <img class="checkout-info-paypal-img" src="../../public/assets/paypal.png" alt="paypal-site" href="https://paypal.com">
+    </a>
+    <p>PayPal transactions are authorized through the PayPal website. Click in the logo above to open a new browser    window and start the transaction.<br><br>    Please review your order before go to the website.  </p>
+  </div>`;
 
   document.querySelector('.checkout-info').innerHTML = paypalMethod;
 
@@ -483,10 +570,19 @@ function showPaypalMethod() {
 
 function showCheckoutConfirmation(method) {
   
-  let confirmation = '<h1>Order confirmation</h1><h2>Game list</h2><div id="checkout-game-list"></div><div>  <h2>Total price:</h2>  <p id="checkout-total-price"></p></div>'
+  let confirmation = `
+  <h1>Order confirmation</h1>
+  <h2>Game list</h2>
+  <div id="checkout-game-list">
+  
+  </div>
+  <div>
+    <h2>Total price:</h2>
+    <p id="checkout-total-price"></p>
+  </div>`;
 
   if (method) {
-    confirmation += '<button class="button">Confirm Transaction</button>'
+    confirmation += '<button class="button" onclick="confirmCheckout()">Confirm Transaction</button>'
   } else {
     confirmation += '<button class="button" disable>Waiting for the payment server...</button>'
   }
@@ -501,4 +597,12 @@ function showCheckoutConfirmation(method) {
   document.querySelector('#checkout-game-list').innerHTML = gameList
 
   document.querySelector('#checkout-total-price').textContent = document.querySelector('.cart-total-price').innerHTML;
+}
+
+function confirmCheckout() {
+  const noItensCart = [];
+  localStorage.setItem('cart-items', JSON.stringify(noItensCart));
+
+  alert("A sua compra foi confirmada!");
+  window.location.reload();
 }
