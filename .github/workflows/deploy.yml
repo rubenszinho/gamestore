@@ -1,0 +1,45 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create build directory and copy artifacts files
+        run: |
+          mkdir -p build/
+          cp -R ./src/* build/
+          cp -R ./src/scripts build/
+
+      # - name: Minify artifacts files
+      #   run: |
+      #     npx html-minifier --input-dir ./build --output-dir ./build --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true
+
+      - name: Set Production URLs
+        run: |
+          if [ "${{github.ref}}" == "refs/heads/develop" ]; then
+            find ./build -name "*.html" -exec sed -i "s|../public/assets/|https://raw.githubusercontent.com/rubenszinho/gamestore/develop/public/assets/|g" {} \;
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          publish_dir: ./build
+          publish_branch: production
