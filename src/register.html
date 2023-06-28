@@ -87,48 +87,6 @@
         </div>
     </footer>
 
-    <script>
-        document.getElementById("registerForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            var name = document.getElementById("name").value;
-            var email = document.getElementById("email").value;
-            var phone = document.getElementById("phone").value;
-            var password = document.getElementById("password").value;
-
-            // Verificar se já existe um usuário com o mesmo email ou telefone
-            var users = JSON.parse(sessionStorage.getItem("users")) || [];
-            var existingUser = users.find(function (user) {
-                return user.email === email || user.phone === phone;
-            });
-
-            if (existingUser) {
-                alert("User with the same email or phone already exists.");
-                return;
-            }
-
-            // Criar um novo objeto de usuário
-            var newUser = {
-                id: phone,
-                isAdmin: false,
-                name: name,
-                email: email,
-                phone: phone,
-                password: password
-            };
-
-            // Adicionar o novo usuário à matriz
-            users.push(newUser);
-
-            // Armazenar a matriz de usuários atualizada no session Storage
-            sessionStorage.setItem("users", JSON.stringify(users));
-
-            alert("Registration successful. You can now login.");
-
-            // Redirecionar para a página de login ou qualquer outra página necessária
-            window.location.href = "/login";
-        });
-    </script>
     <script src="scripts/script.js"></script>
 </body>
 

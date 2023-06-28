@@ -72,32 +72,6 @@
     </div>
   </footer>
   <script src="scripts/script.js"></script>
-  <script>
-    // Verificar se há um usuário logado no session Storage
-    var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-    // Obter a lista de usuários do session Storage
-    var userList = JSON.parse(sessionStorage.getItem("users"));
-
-    const editButton = document.querySelector('.edit-game-button');
-    editButton.style.visibility = 'hidden';
-
-    // Verificar se o usuário está logado
-    if (loggedInUserId != null) {
-        // Procurar o usuário logado na lista de usuários
-        var user = userList.find(function (user) {
-            return user.id == loggedInUserId;
-        });
-
-        // Verificar se o usuário foi encontrado
-        if (user) {
-          // verificar se o usuario e admin
-          if(user.isAdmin){
-            editButton.style.visibility = 'visible';
-          }
-        }
-    }
-  </script>
 </body>
 
 </html>
