@@ -164,6 +164,7 @@ async function populatePage() {
       break;
     
     case '/game-details':
+      handleAdminUI();
       await populateGameDetailsPage(gameId)
       break;
 
@@ -184,7 +185,20 @@ async function populatePage() {
       handleProfileEdit();
       break;
 
+    case '/admin-users-list':
+      populateUsersList();
+      break;
+
+    case '/login':
+      loginListener();
+      break;
+
+    case '/register':
+      registerListener();
+      break;
+
     default:
+      handleAdminUI();
       await populateHomePage()
       break;
   }
@@ -352,12 +366,12 @@ function updateUserProfile() {
       // Verificar se o usuário foi encontrado
       if (user) {
           // Preencher os campos do formulário com os dados do usuário
-          if (document.querySelector(".user-name")) { // se estiver na pagina de perfil
-            document.getElementById(".user-id").value = user.id;
-            document.getElementById(".user-isAdmin").checked = user.isAdmin;
-            document.getElementById(".user-name").value = user.name;
-            document.getElementById(".user-email").value = user.email;
-            document.getElementById(".user-phone").value = user.phone;
+          if (document.getElementById("userName")) { // se estiver na pagina de perfil
+            document.getElementById("userId").textContent = user.id;
+            document.getElementById("isAdmin").textContent = user.isAdmin;
+            document.getElementById("userName").textContent = user.name;
+            document.getElementById("userEmail").textContent = user.email;
+            document.getElementById("userPhone").textContent = user.phone;
           }
 
           if (document.getElementById("name")) { // se estiver na pagina de edição de perfil
@@ -378,19 +392,42 @@ function updateUserProfile() {
 }
 
 function handleProfileEdit() {
+  // Verificar se há um usuário logado no session Storage
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+  // Obter a lista de usuários do session Storage
+  var userList = JSON.parse(sessionStorage.getItem("users"));
 
   document.getElementById("editProfileForm").addEventListener("submit", (e) => {
     e.preventDefault();
     
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const id = document.getElementById("id").value;
-    const isAdmin = document.getElementById("isAdmin").checked;
-    
-    if (name && email && phone) {
-      sessionStorage.setItem("userProfile", JSON.stringify({ id, name, email, phone, isAdmin }));
-      alert("Profile saved successfully.");
+    var updatedName = document.getElementById("name").value;
+    var updatedEmail = document.getElementById("email").value;
+    var updatedPhone = document.getElementById("phone").value;
+    // Atualizar os dados do usuário na lista de usuários
+    var updatedUserIndex = userList.findIndex(function (user) {
+        return user.id == loggedInUserId;
+    });
+
+
+    if (updatedName && updatedEmail && updatedPhone) {
+      if (updatedUserIndex !== -1) {
+          userList[updatedUserIndex].name = updatedName;
+          userList[updatedUserIndex].email = updatedEmail;
+          userList[updatedUserIndex].phone = updatedPhone;
+          sessionStorage.setItem("users", JSON.stringify(userList));
+
+          // Atualizar o usuário no session Storage, se necessário
+          var userInSessionStorage = JSON.parse(sessionStorage.getItem("user"));
+
+          if (userInSessionStorage && userInSessionStorage.id === loggedInUserId) {
+              userInSessionStorage.name = updatedName;
+              userInSessionStorage.email = updatedEmail;
+              userInSessionStorage.phone = updatedPhone;
+              sessionStorage.setItem("user", JSON.stringify(userInSessionStorage));
+              alert("Profile saved successfully.");
+          }
+      }
       window.location.href = '/user-profile';
     } else {
       alert("Please fill in all fields.");
@@ -605,4 +642,206 @@ function confirmCheckout() {
 
   alert("A sua compra foi confirmada!");
   window.location.reload();
+}
+
+function logout() {
+  // Salvar o usuário atualizado no session Storage
+  sessionStorage.setItem("loggedInUserId", null);
+
+  // Redirecionar para a página de login
+  window.location.href = "/login";
+}
+
+// Função para deletar um usuário
+function deleteUser(userId) {
+  // Obtém os dados de usuários armazenados na sessionStorage
+  var usersData = sessionStorage.getItem('users');
+
+  // Verifica se há dados de usuários armazenados
+  if (usersData) {
+    // Converte os dados de usuários de uma string JSON para um objeto JavaScript
+    var users = JSON.parse(usersData);
+
+    // Encontra o índice do usuário com base no userId
+    var userIndex = users.findIndex(function(user) {
+      return user.id === userId;
+    });
+
+    // Verifica se o usuário foi encontrado
+    if (userIndex !== -1) {
+      // Remove o usuário do array de usuários
+      users.splice(userIndex, 1);
+
+      // Atualiza os dados de usuários na sessionStorage
+      sessionStorage.setItem('users', JSON.stringify(users));
+
+      // Recarrega a página para refletir a remoção do usuário
+      location.reload();
+    }
+  }
+}
+
+function populateUsersList(){
+  // Obtém os dados de usuários armazenados na sessionStorage
+  var usersData = sessionStorage.getItem('users');
+  // Verifica se há dados de usuários armazenados
+  if (usersData) {
+    // Converte os dados de usuários de uma string JSON para um objeto JavaScript
+    var users = JSON.parse(usersData);
+
+    // Seleciona o elemento HTML onde a lista de usuários será exibida
+    var usersList = document.querySelector('.users-info');
+
+    // Verifica se há usuários para exibir
+    if (users.length > 0) {
+      // Cria uma lista não ordenada para exibir os usuários
+      var userListElement = document.createElement('ul');
+
+      // Itera sobre cada usuário e cria um item de lista para cada um
+      users.forEach(function(user) {
+        var userItem = document.createElement('li');
+        userItem.textContent = 'ID: ' + user.id + ', Name: ' + user.name + ', Email: ' + user.email;
+
+        // Cria botão de deletar
+        var deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.classList.add('button');
+        deleteButton.addEventListener('click', function() {
+          // Chama a função para deletar o usuário
+          deleteUser(user.id);
+        });
+        userItem.appendChild(deleteButton);
+
+        // Cria botão de editar
+        var editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.classList.add('button');
+        editButton.addEventListener('click', function() {
+          // Redireciona para a página de edição do perfil do usuário
+          window.location.href = '/edit-profile';
+        });
+        userItem.appendChild(editButton);
+
+        userListElement.appendChild(userItem);
+      });
+
+      // Adiciona a lista de usuários ao elemento HTML
+      usersList.appendChild(userListElement);
+    } else {
+      // Caso não haja usuários, exibe uma mensagem informando isso
+      usersList.textContent = 'No users found.';
+    }
+  } else {
+    // Caso não haja dados de usuários armazenados, exibe uma mensagem informando isso
+    var usersList = document.querySelector('.users-info');
+    usersList.textContent = 'No user data found in sessionStorage.';
+  }
+}
+
+function handleAdminUI(){
+  // Verificar se há um usuário logado no session Storage
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+  // Obter a lista de usuários do session Storage
+  var userList = JSON.parse(sessionStorage.getItem("users"));
+
+  const editButton = document.querySelector('.edit-game-button');
+  const addButton = document.querySelector('.add-game-button');
+  if(editButton){
+    editButton.style.visibility = 'hidden';
+  }
+  if(addButton){
+    addButton.style.visibility = 'hidden';
+  }
+
+  // Verificar se o usuário está logado
+  if (loggedInUserId != null) {
+      // Procurar o usuário logado na lista de usuários
+      var user = userList.find(function (user) {
+          return user.id == loggedInUserId;
+      });
+
+      // Verificar se o usuário foi encontrado
+      if (user) {
+        // verificar se o usuario e admin
+        if(user.isAdmin){
+          if(editButton){
+            editButton.style.visibility = 'visible';
+          }
+          if(addButton){
+            addButton.style.visibility = 'visible';
+          }
+        }
+      }
+  }
+}
+
+function loginListener(){
+  document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Obter os valores do formulário
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+
+      // Obter a matriz de usuários do session Storage
+      var users = JSON.parse(sessionStorage.getItem("users")) || [];
+
+      // Verificar se existe um usuário com o email e senha fornecidos
+      var loggedInUser = users.find(function (user) {
+          return user.email === email && user.password === password;
+      });
+
+      if (loggedInUser) {
+          // Salvar o ID do usuário logado no session Storage
+          sessionStorage.setItem("loggedInUserId", JSON.stringify(loggedInUser.id));
+
+          window.location.href = "/";
+      } else {
+          alert("Invalid email or password. Please try again.");
+      }
+  });
+}
+
+function registerListener(){
+  document.getElementById("registerForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      var name = document.getElementById("name").value;
+      var email = document.getElementById("email").value;
+      var phone = document.getElementById("phone").value;
+      var password = document.getElementById("password").value;
+
+      // Verificar se já existe um usuário com o mesmo email ou telefone
+      var users = JSON.parse(sessionStorage.getItem("users")) || [];
+      var existingUser = users.find(function (user) {
+          return user.email === email || user.phone === phone;
+      });
+
+      if (existingUser) {
+          alert("User with the same email or phone already exists.");
+          return;
+      }
+
+      // Criar um novo objeto de usuário
+      var newUser = {
+          id: phone,
+          isAdmin: false,
+          name: name,
+          email: email,
+          phone: phone,
+          password: password
+      };
+
+      // Adicionar o novo usuário à matriz
+      users.push(newUser);
+
+      // Armazenar a matriz de usuários atualizada no session Storage
+      sessionStorage.setItem("users", JSON.stringify(users));
+
+      alert("Registration successful. You can now login.");
+
+      // Redirecionar para a página de login ou qualquer outra página necessária
+      window.location.href = "/login";
+  });
 }

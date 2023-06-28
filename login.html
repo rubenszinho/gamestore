@@ -70,32 +70,6 @@
         </div>
     </footer>
 
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            // Obter os valores do formulário
-            var email = document.getElementById("email").value;
-            var password = document.getElementById("password").value;
-
-            // Obter a matriz de usuários do session Storage
-            var users = JSON.parse(sessionStorage.getItem("users")) || [];
-
-            // Verificar se existe um usuário com o email e senha fornecidos
-            var loggedInUser = users.find(function (user) {
-                return user.email === email && user.password === password;
-            });
-
-            if (loggedInUser) {
-                // Salvar o ID do usuário logado no session Storage
-                sessionStorage.setItem("loggedInUserId", JSON.stringify(loggedInUser.id));
-
-                window.location.href = "/";
-            } else {
-                alert("Invalid email or password. Please try again.");
-            }
-        });
-    </script>
     <script src="scripts/script.js"></script>
 </body>
 

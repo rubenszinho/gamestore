@@ -69,47 +69,6 @@
     </div>
   </footer>
 
-  <script>
-      window.addEventListener("load", function () {
-          // Obter o usuário logado do session Storage
-          var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-          // Obter a lista de usuários do session Storage
-          var userList = JSON.parse(sessionStorage.getItem("users"));
-
-          // Verificar se o usuário está logado
-          if (loggedInUserId != null) {
-              // Procurar o usuário logado na lista de usuários
-              var user = userList.find(function (user) {
-                  return user.id == loggedInUserId;
-              });
-
-              if (user) {
-                  // Exibir as informações do usuário
-                  document.getElementById("userId").textContent = user.id;
-                  document.getElementById("isAdmin").textContent = user.isAdmin;
-                  document.getElementById("userName").textContent = user.name;
-                  document.getElementById("userEmail").textContent = user.email;
-                  document.getElementById("userPhone").textContent = user.phone;
-              } else {
-                  // Usuário não encontrado, redirecionar para a página de login
-                  window.location.href = "/login";
-              }
-          } else {
-              // Redirecionar para a página de login
-              window.location.href = "/login";
-          }
-      });
-
-
-      function logout() {
-        // Salvar o usuário atualizado no session Storage
-        sessionStorage.setItem("loggedInUserId", null);
-
-        // Redirecionar para a página de login
-        window.location.href = "/login";
-      }
-  </script>
   <script src="scripts/script.js"></script>
 </body>
 
