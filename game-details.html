@@ -44,11 +44,11 @@
       </div>
     </div>
     <a href="/admin-game-edit">
-        <div class="edit-game-button">
-            <div class="edit-game-button__plus">
-            <span class="material-symbols-outlined">edit</span>
-            </div>
+      <div class="edit-game-button">
+        <div class="edit-game-button__plus">
+          <span class="material-symbols-outlined">edit</span>
         </div>
+      </div>
     </a>
   </div>
 
@@ -71,7 +71,7 @@
       </div>
     </div>
   </footer>
-  <script src="scripts/script.js"></script>
+  <script src="./scripts/script.js"></script>
   <script>
     // Verificar se há um usuário logado no session Storage
     var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
@@ -84,18 +84,18 @@
 
     // Verificar se o usuário está logado
     if (loggedInUserId != null) {
-        // Procurar o usuário logado na lista de usuários
-        var user = userList.find(function (user) {
-            return user.id == loggedInUserId;
-        });
+      // Procurar o usuário logado na lista de usuários
+      var user = userList.find(function (user) {
+        return user.id == loggedInUserId;
+      });
 
-        // Verificar se o usuário foi encontrado
-        if (user) {
-          // verificar se o usuario e admin
-          if(user.isAdmin){
-            editButton.style.visibility = 'visible';
-          }
+      // Verificar se o usuário foi encontrado
+      if (user) {
+        // verificar se o usuario e admin
+        if (user.isAdmin) {
+          editButton.style.visibility = 'visible';
         }
+      }
     }
   </script>
 </body>

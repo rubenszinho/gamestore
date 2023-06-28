@@ -61,7 +61,7 @@
     </div>
   </footer>
 
-  <script src="scripts/script.js"></script>
+  <script src="./scripts/script.js"></script>
   <script>
     // Obtém os dados de usuários armazenados na sessionStorage
     var usersData = sessionStorage.getItem('users');
@@ -79,7 +79,7 @@
         var userListElement = document.createElement('ul');
 
         // Itera sobre cada usuário e cria um item de lista para cada um
-        users.forEach(function(user) {
+        users.forEach(function (user) {
           var userItem = document.createElement('li');
           userItem.textContent = 'ID: ' + user.id + ', Name: ' + user.name + ', Email: ' + user.email;
 
@@ -87,7 +87,7 @@
           var deleteButton = document.createElement('button');
           deleteButton.textContent = 'Delete';
           deleteButton.classList.add('button');
-          deleteButton.addEventListener('click', function() {
+          deleteButton.addEventListener('click', function () {
             // Chama a função para deletar o usuário
             deleteUser(user.id);
           });
@@ -97,7 +97,7 @@
           var editButton = document.createElement('button');
           editButton.textContent = 'Edit';
           editButton.classList.add('button');
-          editButton.addEventListener('click', function() {
+          editButton.addEventListener('click', function () {
             // Redireciona para a página de edição do perfil do usuário
             window.location.href = '/edit-profile';
           });
@@ -129,7 +129,7 @@
         var users = JSON.parse(usersData);
 
         // Encontra o índice do usuário com base no userId
-        var userIndex = users.findIndex(function(user) {
+        var userIndex = users.findIndex(function (user) {
           return user.id === userId;
         });
 

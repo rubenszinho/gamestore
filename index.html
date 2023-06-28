@@ -38,10 +38,10 @@
       <div class="carousel-container">
         <div class="carousel-slide"></div>
         <button class="carousel-button carousel-button--left">
-            <span class="material-symbols-outlined">arrow_back</span>
+          <span class="material-symbols-outlined">arrow_back</span>
         </button>
         <button class="carousel-button carousel-button--right">
-            <span class="material-symbols-outlined">arrow_forward</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
         </button>
       </div>
     </div>
@@ -54,9 +54,9 @@
       <div class="grid-container top-games"></div>
     </div>
     <a href="/admin-game-add">
-        <div class="add-game-button">
-            <div class="add-game-button__plus">+</div>
-        </div>
+      <div class="add-game-button">
+        <div class="add-game-button__plus">+</div>
+      </div>
     </a>
   </div>
 
@@ -79,7 +79,7 @@
       </div>
     </div>
   </footer>
-  <script src="scripts/script.js"></script>
+  <script src="./scripts/script.js"></script>
   <script>
     // Verificar se há um usuário logado no session Storage
     var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
@@ -92,18 +92,18 @@
 
     // Verificar se o usuário está logado
     if (loggedInUserId != null) {
-        // Procurar o usuário logado na lista de usuários
-        var user = userList.find(function (user) {
-            return user.id == loggedInUserId;
-        });
+      // Procurar o usuário logado na lista de usuários
+      var user = userList.find(function (user) {
+        return user.id == loggedInUserId;
+      });
 
-        // Verificar se o usuário foi encontrado
-        if (user) {
-          // verificar se o usuario e admin
-          if(user.isAdmin){
-            addButton.style.visibility = 'visible';
-          }
+      // Verificar se o usuário foi encontrado
+      if (user) {
+        // verificar se o usuario e admin
+        if (user.isAdmin) {
+          addButton.style.visibility = 'visible';
         }
+      }
     }
   </script>
 </body>
