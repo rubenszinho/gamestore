@@ -1,1 +1,160 @@
-.cart-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding: 10px; background-color: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 4px; } .cart-item-image { width: 80px; height: 80px; border-radius: 4px; object-fit: cover; } .cart-item-info { display: flex; flex-direction: column; flex-grow: 1; margin-left: 20px; } .cart-item-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; } .cart-total-price, .cart-item-price { font-size: 16px; font-weight: bold; color: var(--accent-color); } .cart-item-remove { background-color: var(--background-highlight-color); color: #fff; border: none; cursor: pointer; padding: 10px 20px; font-weight: bold; } .cart-item-remove:hover { background-color: #1a74b8; } .checkout { display: flex; align-items: center; } .checkout-options { flex: 1; } .checkout-info { flex: 1; } .checkout-confirm { flex: 1; } .checkout-info-paypal, .checkout-info-pix, .checkout-info-forms { width: 100%; max-width: 400px; padding: 30px; background-color: var(--card-background-color); border-radius: 10px; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; } .checkout-info-pix label, .checkout-info-forms label { margin-top: 20px; margin-bottom: 5px; } .checkout-info-pix input, .checkout-info-forms input { padding: 10px; border: 0; font-size: 14px; color: var(--text-color); background-color: var(--background-color); border-radius: 5px; } .checkout-info-pix button, .checkout-info-forms button { margin-top: 20px; padding: 10px; border: none; border-radius: 5px; cursor: pointer; } .checkout-info-paypal img { width: 100%; max-width: 400px; } .checkout-info-forms img { width: 250px; height: 250px; align-self: center; } .checkout-options ul { list-style: none; } .type-card { width: 200px; height: 200px; background-image: url('../../public/assets/cartao.png'); background-size: cover; background-repeat: no-repeat; background-position: center; } .type-paypal { width: 200px; height: 200px; background-image: url('../../public/assets/paypal.png'); background-size: cover; background-repeat: no-repeat; background-position: center; } .type-pix { width: 200px; height: 200px; background-image: url('../../public/assets/pix.png'); background-size: cover; background-repeat: no-repeat; background-position: center; } .checkout-confirm { display: flex; flex-direction: column; text-align: center; align-items: center; } .checkout-confirm button { width: fit-content; }
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: 4px;
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 20px;
+}
+
+.cart-item-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.cart-total-price,
+.cart-item-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.cart-item-remove {
+    background-color: var(--background-highlight-color);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+.cart-item-remove:hover {
+    background-color: #1a74b8;
+}
+
+.checkout {
+    display: flex;
+    align-items: center;
+}
+
+.checkout-options {
+    flex: 1;
+}
+
+.checkout-info {
+    flex: 1;
+    
+}
+
+.checkout-confirm {
+    flex: 1;
+}
+
+.checkout-info-paypal,
+.checkout-info-pix,
+.checkout-info-forms {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background-color: var(--card-background-color);
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout-info-pix label,
+.checkout-info-forms label {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.checkout-info-pix input,
+.checkout-info-forms input {
+    padding: 10px;
+    border: 0;
+    font-size: 14px;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border-radius: 5px;
+}
+
+.checkout-info-pix button,
+.checkout-info-forms button {
+    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.checkout-info-paypal img {
+    width: 100%;
+    max-width: 400px;
+}
+
+
+.checkout-info-forms img {
+    width: 250px;
+    height: 250px;
+    align-self: center;
+}
+
+.checkout-options ul {
+    list-style: none;
+}
+
+.type-card {
+    width: 200px;
+    height: 200px;
+    background-image: url('../../public/assets/cartao.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.type-paypal {
+    width: 200px;
+    height: 200px;
+    background-image: url('../../public/assets/paypal.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.type-pix {
+    width: 200px;
+    height: 200px;
+    background-image: url('../../public/assets/pix.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.checkout-confirm {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+}
+
+.checkout-confirm button {
+    width: fit-content;
+}

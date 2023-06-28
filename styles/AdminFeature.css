@@ -1,1 +1,30 @@
-.add-game-button, .edit-game-button { width: 80px; height: 80px; background-color: var(--title-color); border-radius: 50%; position: fixed; left: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; justify-content: center; align-items: center; } .add-game-button { bottom: 20px; } .edit-game-button { bottom: 210px; } .add-game-button:hover, .edit-game-button:hover { cursor: pointer; } .add-game-button__plus, .edit-game-button__plus { font-size: 40px; font-weight: bold; color: white; }
+.add-game-button, .edit-game-button {
+    width: 80px;
+    height: 80px;
+    background-color: var(--title-color);
+    border-radius: 50%;
+    position: fixed;
+    left: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-game-button {
+    bottom: 20px;
+}
+
+.edit-game-button {
+    bottom: 210px;
+}
+
+.add-game-button:hover, .edit-game-button:hover {
+    cursor: pointer;
+}
+
+.add-game-button__plus, .edit-game-button__plus {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+}

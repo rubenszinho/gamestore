@@ -1,1 +1,156 @@
-<!doctypehtml><html lang="en"><meta charset="UTF-8"><meta name="viewport"content="width=device-width,initial-scale=1"><title>Edit Profile - Game Store</title><link rel="stylesheet"href="styles/globals.css"><link rel="stylesheet"href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"><link rel="icon"type="image/x-icon"href="https://raw.githubusercontent.com/rubenszinho/gamestore/develop/public/assets/favico.ico"><div class="content"><div class="navbar"><div class="nav-items"><a href="login">Login</a> <a href="/">Home</a> <a href="search">Category</a> <a href="my-cart">My Cart</a> <a href="user-profile">User Profile</a> <a id="adminLink"href="admin-page">Admin</a></div><div class="search-container"><input class="search-input"placeholder="Search games..."onkeydown="onSearchEnter(event)"> <button class="search-button"onclick="onSearchClick()">Search</button></div><div><button class="theme-toggle"onclick="toggleTheme()"><span class="material-symbols-outlined">brightness_medium</span></button></div></div><div class="container"><h1 class="title">Edit Profile</h1><form id="editProfileForm"class="edit-profile-form"><div><label for="id">ID</label> <input id="id"disabled="disabled"></div><div><label for="isAdmin">Admin</label> <input type="checkbox"id="isAdmin"disabled="disabled"></div><div><label for="name">Name</label> <input id="name"class="edit-profile-input"required></div><div><label for="email">Email</label> <input type="email"id="email"class="edit-profile-input"required></div><div><label for="phone">Phone</label> <input id="phone"class="edit-profile-input"required></div><div><button type="submit"class="button">Save</button></div></form></div></div><footer><div class="footer-container"><div class="footer-section"><h3>About</h3><p>Welcome to Game Store, your source for the best games at the best prices.</div><div class="footer-section"><h3>Contact Us</h3><p>Email: support@gamestore.com<p>Phone: +1 (555) 123-4567</div><div class="footer-section"><h3>Follow Us</h3><p><a href="#">Facebook</a><p><a href="#">Twitter</a><p><a href="#">Instagram</a></div></div></footer><script>var user,loggedInUserId=JSON.parse(sessionStorage.getItem("loggedInUserId")),userList=JSON.parse(sessionStorage.getItem("users"));null!=loggedInUserId&&(user=userList.find(function(e){return e.id==loggedInUserId}))?(document.getElementById("id").value=user.id,document.getElementById("isAdmin").checked=user.isAdmin,document.getElementById("name").value=user.name,document.getElementById("email").value=user.email,document.getElementById("phone").value=user.phone):window.location.href="/login",document.getElementById("editProfileForm").addEventListener("submit",function(e){e.preventDefault();var e=document.getElementById("name").value,n=document.getElementById("email").value,t=document.getElementById("phone").value,s=userList.findIndex(function(e){return e.id==loggedInUserId});-1!==s&&(userList[s].name=e,userList[s].email=n,userList[s].phone=t,sessionStorage.setItem("users",JSON.stringify(userList)),s=JSON.parse(sessionStorage.getItem("user")))&&userInsessionStorage.id===loggedInUserId&&(s.name=e,s.email=n,s.phone=t,sessionStorage.setItem("user",JSON.stringify(s))),window.location.href="/user-profile"})</script><script src="scripts/script.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Game Store</title>
+    <link rel="stylesheet" href="styles/globals.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/rubenszinho/gamestore/develop/public/assets/favico.ico">
+</head>
+
+<body>
+    <div class="content">
+        <div class="navbar">
+            <div class="nav-items">
+                <a href="login">Login</a>
+                <a href="/">Home</a>
+                <a href="search">Category</a>
+                <a href="my-cart">My Cart</a>
+                <a href="user-profile">User Profile</a>
+                <a id="adminLink" href="admin-page">Admin</a>
+            </div>
+            <div class="search-container">
+                <input class="search-input" type="text" placeholder="Search games..."
+                    onkeydown="onSearchEnter(event)" />
+                <button class="search-button" onclick="onSearchClick()">Search</button>
+            </div>
+            <div>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span class="material-symbols-outlined">brightness_medium</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="container">
+            <h1 class="title">Edit Profile</h1>
+            <form id="editProfileForm" class="edit-profile-form">
+                <div>
+                    <label for="id">ID</label>
+                    <input type="text" id="id" disabled />
+                </div>
+                <div>
+                    <label for="isAdmin">Admin</label>
+                    <input type="checkbox" id="isAdmin" disabled />
+                </div>
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <button type="submit" class="button">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>About</h3>
+                <p>Welcome to Game Store, your source for the best games at the best prices.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: support@gamestore.com</p>
+                <p>Phone: +1 (555) 123-4567</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <p><a href="#">Facebook</a></p>
+                <p><a href="#">Twitter</a></p>
+                <p><a href="#">Instagram</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Verificar se há um usuário logado no session Storage
+        var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+        // Obter a lista de usuários do session Storage
+        var userList = JSON.parse(sessionStorage.getItem("users"));
+
+        // Verificar se o usuário está logado
+        if (loggedInUserId != null) {
+            // Procurar o usuário logado na lista de usuários
+            var user = userList.find(function (user) {
+                return user.id == loggedInUserId;
+            });
+
+            // Verificar se o usuário foi encontrado
+            if (user) {
+                // Preencher os campos do formulário com os dados do usuário
+                document.getElementById("id").value = user.id;
+                document.getElementById("isAdmin").checked = user.isAdmin;
+                document.getElementById("name").value = user.name;
+                document.getElementById("email").value = user.email;
+                document.getElementById("phone").value = user.phone;
+            } else {
+                // Redirecionar para a página de login se o usuário não for encontrado
+                window.location.href = "/login";
+            }
+        } else {
+            // Redirecionar para a página de login se o usuário não estiver logado ou a lista de usuários estiver vazia
+            window.location.href = "/login";
+        }
+
+        // Lidar com o envio do formulário
+        document.getElementById("editProfileForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Obter os valores atualizados do formulário
+            var updatedName = document.getElementById("name").value;
+            var updatedEmail = document.getElementById("email").value;
+            var updatedPhone = document.getElementById("phone").value;
+
+            // Atualizar os dados do usuário na lista de usuários
+            var updatedUserIndex = userList.findIndex(function (user) {
+                return user.id == loggedInUserId;
+            });
+
+            if (updatedUserIndex !== -1) {
+                userList[updatedUserIndex].name = updatedName;
+                userList[updatedUserIndex].email = updatedEmail;
+                userList[updatedUserIndex].phone = updatedPhone;
+                sessionStorage.setItem("users", JSON.stringify(userList));
+
+                // Atualizar o usuário no session Storage, se necessário
+                var userInSessionStorage = JSON.parse(sessionStorage.getItem("user"));
+
+                if (userInSessionStorage && userInsessionStorage.id === loggedInUserId) {
+                    userInSessionStorage.name = updatedName;
+                    userInSessionStorage.email = updatedEmail;
+                    userInSessionStorage.phone = updatedPhone;
+                    sessionStorage.setItem("user", JSON.stringify(userInSessionStorage));
+                }
+            }
+
+            // Redirecionar para a página de perfil do usuário
+            window.location.href = "/user-profile";
+        });
+    </script>
+    <script src="scripts/script.js"></script>
+</body>
+
+</html>
