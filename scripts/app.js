@@ -6,62 +6,70 @@ const app = express();
 // Serve static files from the "src" directory
 app.use(express.static(path.join(__dirname, '../')));
 
-// // Middleware to parse request body
+// Middleware to parse request body
 app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
+// Create a new router
+const gamestoreRouter = express.Router();
+
+// Define routes on the router
+gamestoreRouter.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
-app.get('/login', function (req, res) {
+gamestoreRouter.get('/login', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'login.html'));
 });
 
-app.get('/register', function (req, res) {
+gamestoreRouter.get('/register', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'register.html'));
 });
 
-app.get('/admin-game-add', function (req, res) {
+gamestoreRouter.get('/admin-game-add', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'admin-game-add.html'));
 });
 
-app.get('/edit-profile', function (req, res) {
+gamestoreRouter.get('/edit-profile', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'edit-profile.html'));
 });
 
-app.get('/forgot-password', function (req, res) {
+gamestoreRouter.get('/forgot-password', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'forgot-password.html'));
 });
 
-app.get('/game-details', function (req, res) {
+gamestoreRouter.get('/game-details', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'game-details.html'));
 });
 
-app.get('/home-admin', function (req, res) {
+gamestoreRouter.get('/home-admin', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'home-admin.html'));
 });
 
-app.get('/my-cart', function (req, res) {
+gamestoreRouter.get('/my-cart', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'my-cart.html'));
 });
 
-app.get('/search', function (req, res) {
+gamestoreRouter.get('/search', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'search.html'));
 });
 
-app.get('/user-profile', function (req, res) {
+gamestoreRouter.get('/user-profile', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'user-profile.html'));
 });
 
-app.get('/admin-page', function (req, res) {
+gamestoreRouter.get('/admin-page', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'admin-page.html'));
 });
 
-app.get('/admin-users-list', function (req, res) {
+gamestoreRouter.get('/admin-users-list', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'admin-users-list.html'));
 });
 
+// Use the router for paths starting with /gamestore
+app.use('/gamestore', gamestoreRouter);
+
 app.listen(3000, () => console.log('Server is running on port 3000'));
+
 
 // const MongoClient = require('mongodb').MongoClient;
 
