@@ -172,7 +172,8 @@ async function populatePage() {
       await populateCartPage()
       break;
 
-    case '/index':
+    case '/':
+      handleAdminUI();
       await populateHomePage()
       break;
 
@@ -198,8 +199,8 @@ async function populatePage() {
       break;
 
     default:
-      handleAdminUI();
-      await populateHomePage()
+      //handleAdminUI();
+      //await populateHomePage()
       break;
   }
 }
@@ -439,7 +440,7 @@ function toggleUserProfileLink() {
     var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
     if (loggedInUserId != null) {
-        userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+      userProfileLink.style.display = "block"; // Exibe o link "User Profile"
     } else {
       userProfileLink.style.display = "none"; // Oculta o link "User Profile"
     }

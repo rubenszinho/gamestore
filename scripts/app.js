@@ -25,6 +25,10 @@ app.get('/admin-game-add', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'admin-game-add.html'));
 });
 
+app.get('/admin-game-edit', function (req, res) {
+    res.sendFile(path.join(__dirname, '../', 'admin-game-edit.html'));
+});
+
 app.get('/edit-profile', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'edit-profile.html'));
 });
