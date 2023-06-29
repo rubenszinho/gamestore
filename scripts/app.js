@@ -69,150 +69,150 @@ app.listen(3000, () => console.log('Server is running on port 3000'));
 
 // const MongoClient = require('mongodb').MongoClient;
 
-// const url = 'mongodb://localhost:27017';
-// const dbName = 'myDatabase';
+const mongoose = require("mongoose");
 
-// // Connection pooling
-// let db;
-// MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
-//     console.log("Connected successfully to server");
-//     db = client.db(dbName);
-// });
+const mongoURI = 'mongodb://127.0.0.1:27017/test';
 
-// app.post('/users', (req, res) => {
-//     const user = req.body;
-//     insertUsers(db, user, () => res.send('User inserted!'));
-// });
+// Conectar ao MongoDB usando o Mongoose
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
 
-// app.put('/users/:email', (req, res) => {
-//     const email = req.params.email;
-//     const newValues = req.body;
-//     updateUser(db, email, newValues, () => res.send(`User with email ${email} updated!`));
-// });
+// Definir o esquema do usuário usando o Mongoose
+const userSchema = new mongoose.Schema({
+  _id: Number,
+  isAdmin: Boolean,
+  name: String,
+  email: String,
+  phone: Number,
+  password: String
+});
 
-// app.delete('/users/:email', (req, res) => {
-//     const email = req.params.email;
-//     deleteUser(db, email, () => res.send(`User with email ${email} deleted!`));
-// });
+const User = mongoose.model('User', userSchema);
 
-// app.get('/users', (req, res) => {
-//     findUsers(db, (users) => res.json(users));
-// });
+// Rota para registrar usuário
+app.post('/registerUser', async (req, res) => {
+  try {
+    const { name, email, phone, password } = req.body;
 
-// app.post('/admins', (req, res) => {
-//     const admin = req.body;
-//     insertAdmins(db, admin, () => res.send('Admin inserted!'));
-// });
+    // Verificar se já existe um usuário com o mesmo email ou telefone
+    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+    if (existingUser) {
+      return res.status(400).json({ message: "User with the same email or phone already exists." });
+    }
 
-// app.post('/products', (req, res) => {
-//     const product = req.body;
-//     insertProducts(db, product, () => res.send('Product inserted!'));
-// });
+    // Criar um novo objeto de usuário
+    const newUser = new User({
+      _id: phone,
+      isAdmin: false,
+      name: name,
+      email: email,
+      phone: phone,
+      password: password
+    });
 
-// app.post('/orders', (req, res) => {
-//     const order = req.body;
-//     placeOrder(db, order, () => res.send('Order placed!'));
-// });
+    // Salvar o novo usuário no banco de dados
+    await newUser.save();
 
-// // Function to insert users
-// const insertUsers = function (db, callback) {
-//     const collection = db.collection('users');
+    res.status(200).json({ message: "Registration successful. You can now login." });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ message: "Failed to register user." });
+  }
+});
 
-//     collection.insertMany([
-//         { name: 'John Doe', email: 'john@example.com' },
-//         { name: 'Jane Doe', email: 'jane@example.com' }
-//     ], function (err, result) {
-//         console.log("Inserted users into the collection");
-//         callback(result);
-//     });
-// }
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
 
-// const updateUser = function (db, email, newValues, callback) {
-//     const collection = db.collection('users');
+  try {
+    // Verificar se o email e a senha correspondem a um usuário no banco de dados
+    const user = await User.findOne({ email, password });
 
-//     collection.updateOne({ email: email }, { $set: newValues }, function (err, result) {
-//         console.log("Updated the document with the email " + email);
-//         callback(result);
-//     });
-// }
+    if (user) {
+      res.json({ loggedIn: true, userId: user._id });
+    } else {
+      res.json({ loggedIn: false });
+    }
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
-// // Usage: updateUser(db, 'john@example.com', { name: 'John Updated' }, callback);
+// Rota para obter os dados do perfil do usuário
+app.get('/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
 
+    // Procurar o usuário pelo ID
+    const user = await User.findById(userId);
 
-// const deleteUser = function (db, email, callback) {
-//     const collection = db.collection('users');
+    if (user) {
+      res.status(200).json({ user });
+    } else {
+      res.status(404).json({ message: "User not found." });
+    }
+  } catch (error) {
+    console.error('Error retrieving user profile:', error);
+    res.status(500).json({ message: "Failed to retrieve user profile." });
+  }
+});
 
-//     collection.deleteOne({ email: email }, function (err, result) {
-//         console.log("Removed the document with the email " + email);
-//         callback(result);
-//     });
-// }
+// Rota para atualizar os dados do perfil do usuário
+app.put('/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isAdmin, name, email, phone } = req.body;
 
-// // Usage: deleteUser(db, 'john@example.com', callback);
+    // Atualizar os campos do perfil do usuário
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      isAdmin,
+      name,
+      email,
+      phone
+    }, { new: true });
 
+    if (updatedUser) {
+      res.status(200).json({ message: "User profile updated successfully." });
+    } else {
+      res.status(404).json({ message: "User not found." });
+    }
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: "Failed to update user profile." });
+  }
+});
 
-// // Function to insert admins
-// const insertAdmins = function (db, callback) {
-//     const collection = db.collection('admins');
+// Importe os módulos e configure o servidor Express
 
-//     collection.insertMany([
-//         { name: 'Admin1', email: 'admin1@example.com' },
-//         { name: 'Admin2', email: 'admin2@example.com' }
-//     ], function (err, result) {
-//         console.log("Inserted admins into the collection");
-//         callback(result);
-//     });
-// }
+// Rota para deletar um usuário
+app.delete('/api/users/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
 
-// // Function to insert products
-// const insertProducts = function (db, callback) {
-//     const collection = db.collection('products');
+    // Deleta o usuário pelo ID no banco de dados
+    await User.findByIdAndDelete(userId);
 
-//     collection.insertMany([
-//         { name: 'Game1', description: 'This is game1', price: 50 },
-//         { name: 'Game2', description: 'This is game2', price: 70 }
-//     ], function (err, result) {
-//         console.log("Inserted products into the collection");
-//         callback(result);
-//     });
-// }
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-// const placeOrder = function (db, order, callback) {
-//     const collection = db.collection('orders');
+// Rota para obter a lista de usuários
+app.get('/api/users', async (req, res) => {
+  try {
+    // Obtém todos os usuários do banco de dados
+    const users = await User.find();
 
-//     collection.insertOne(order, function (err, result) {
-//         console.log("Placed a new order");
-//         callback(result);
-//     });
-// }
-
-// // Usage:
-// // const order = { userEmail: 'john@example.com', products: ['Game1', 'Game2'], total: 120 };
-// // placeOrder(db, order, callback);
-
-// MongoClient.connect(url, function (err, client) {
-//     console.log("Connected successfully to server");
-
-//     const db = client.db(dbName);
-
-//     insertUsers(db, function () {
-//         insertAdmins(db, function () {
-//             insertProducts(db, function () {
-//                 client.close();
-//             });
-//         });
-//     });
-// });
-
-// const findUsers = function (db, callback) {
-//     const collection = db.collection('users');
-
-//     collection.find({}).toArray(function (err, docs) {
-//         console.log("Found the following user records");
-//         console.log(docs)
-//         callback(docs);
-//     });
-// }
-
-  // Similar functions can be created for admins and products
-
+    res.json(users);
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});

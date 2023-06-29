@@ -164,7 +164,7 @@ async function populatePage() {
       break;
     
     case '/game-details':
-      handleAdminUI();
+      // handleAdminUI();
       await populateGameDetailsPage(gameId)
       break;
 
@@ -173,7 +173,7 @@ async function populatePage() {
       break;
 
     case '/':
-      handleAdminUI();
+      // handleAdminUI();
       await populateHomePage()
       break;
 
@@ -350,178 +350,11 @@ function addToCart(event) {
   window.location.href = '/my-cart'
 }
 
-function updateUserProfile() {
-  // Verificar se há um usuário logado no Session Storage
-  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-  // Obter a lista de usuários do Session Storage
-  var userList = JSON.parse(sessionStorage.getItem("users"));
-
-  // Verificar se o usuário está logado
-  if (loggedInUserId != null) {
-      // Procurar o usuário logado na lista de usuários
-      var user = userList.find(function (user) {
-          return user.id == loggedInUserId;
-      });
-
-      // Verificar se o usuário foi encontrado
-      if (user) {
-          // Preencher os campos do formulário com os dados do usuário
-          if (document.getElementById("userName")) { // se estiver na pagina de perfil
-            document.getElementById("userId").textContent = user.id;
-            document.getElementById("isAdmin").textContent = user.isAdmin;
-            document.getElementById("userName").textContent = user.name;
-            document.getElementById("userEmail").textContent = user.email;
-            document.getElementById("userPhone").textContent = user.phone;
-          }
-
-          if (document.getElementById("name")) { // se estiver na pagina de edição de perfil
-            document.getElementById("id").value = user.id;
-            document.getElementById("isAdmin").checked = user.isAdmin;
-            document.getElementById("name").value = user.name;
-            document.getElementById("email").value = user.email;
-            document.getElementById("phone").value = user.phone;
-          }
-      } else {
-          // Redirecionar para a página de login se o usuário não for encontrado
-          window.location.href = "/login";
-      }
-  } else {
-      // Redirecionar para a página de login se o usuário não estiver logado ou a lista de usuários estiver vazia
-      window.location.href = "/login";
-  }
-}
-
-function handleProfileEdit() {
-  // Verificar se há um usuário logado no session Storage
-  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-  // Obter a lista de usuários do session Storage
-  var userList = JSON.parse(sessionStorage.getItem("users"));
-
-  document.getElementById("editProfileForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    
-    var updatedName = document.getElementById("name").value;
-    var updatedEmail = document.getElementById("email").value;
-    var updatedPhone = document.getElementById("phone").value;
-    // Atualizar os dados do usuário na lista de usuários
-    var updatedUserIndex = userList.findIndex(function (user) {
-        return user.id == loggedInUserId;
-    });
-
-
-    if (updatedName && updatedEmail && updatedPhone) {
-      if (updatedUserIndex !== -1) {
-          userList[updatedUserIndex].name = updatedName;
-          userList[updatedUserIndex].email = updatedEmail;
-          userList[updatedUserIndex].phone = updatedPhone;
-          sessionStorage.setItem("users", JSON.stringify(userList));
-
-          // Atualizar o usuário no session Storage, se necessário
-          var userInSessionStorage = JSON.parse(sessionStorage.getItem("user"));
-
-          if (userInSessionStorage && userInSessionStorage.id === loggedInUserId) {
-              userInSessionStorage.name = updatedName;
-              userInSessionStorage.email = updatedEmail;
-              userInSessionStorage.phone = updatedPhone;
-              sessionStorage.setItem("user", JSON.stringify(userInSessionStorage));
-              alert("Profile saved successfully.");
-          }
-      }
-      window.location.href = '/user-profile';
-    } else {
-      alert("Please fill in all fields.");
-    }
-  })
-}
-
-function toggleUserProfileLink() {
-    var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-    if (loggedInUserId != null) {
-      userProfileLink.style.display = "block"; // Exibe o link "User Profile"
-    } else {
-      userProfileLink.style.display = "none"; // Oculta o link "User Profile"
-    }
-}
-
-function toggleAdminLink() {
-    adminLink.style.display = "none"; // Oculta o link "User Profile"
-    var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-    // Obter a lista de usuários do session Storage
-    var userList = JSON.parse(sessionStorage.getItem("users"));
-
-    // Verificar se o usuário está logado
-    if (loggedInUserId != null) {
-        // Procurar o usuário logado na lista de usuários
-        var user = userList.find(function (user) {
-            return user.id == loggedInUserId;
-        });
-
-        // Verificar se o usuário foi encontrado
-        if (user) {
-          // verificar se o usuario e admin
-          if(user.isAdmin){
-            adminLink.style.display = "block"; // Exibe o link "User Profile"
-          }
-        }
-    }
-}
-
 // Chamada da função ao carregar a página
 window.addEventListener("load", toggleUserProfileLink);
-window.addEventListener("load", toggleAdminLink);
+window.addEventListener("load", handleAdminUI);
 
 
-function handleCheckout() { 
-  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-  if (loggedInUserId == null) {
-    window.location.href = "/login";
-  }
-  
-  if (!document.querySelector('.cart-item')) {
-    alert('Voce não possui nenhum item no carrinho.');
-    window.location.href = "/index";
-  }
-
-  const paymentMethods = `
-  <h2>Payments</h2>
-  <ul id='list-checkboxes' class='checkout-options'>
-    <li class='type-card'>
-      <input type='checkbox' value='card'>
-      <label>Credit/Debit Card</label>
-    </li>
-    <li class='type-paypal'>
-      <input type='checkbox' value='paypal'>
-      <label>Paypal</label>
-    </li>
-    <li class='type-pix'>
-      <input type='checkbox' value='pix'>
-      <label>Pix</label>
-    </li>
-  </ul>`;
-
-  document.querySelector('.checkout-options').innerHTML = paymentMethods;
-
-  let checkboxes = document.querySelectorAll('#list-checkboxes input[type="checkbox"]');
-  checkboxes.forEach(function(checkbox) {
-    checkbox.addEventListener('change', function() {
-      document.querySelector('.checkout-info').innerHTML = ''; // retira o pagamento q estava antes
-      document.querySelector('.checkout-confirm').innerHTML = '';
-      if (this.checked) {
-        checkboxes.forEach(function(otherCheckbox) {
-          if (otherCheckbox !== checkbox) {
-            otherCheckbox.checked = false;
-          }
-        });
-        showPaymentMethod(this);
-      }
-    });
-  });
-}
 
 function showPaymentMethod(checkbox) {
   switch (checkbox.value) {
@@ -655,97 +488,62 @@ function logout() {
 
 // Função para deletar um usuário
 function deleteUser(userId) {
-  // Obtém os dados de usuários armazenados na sessionStorage
-  var usersData = sessionStorage.getItem('users');
-
-  // Verifica se há dados de usuários armazenados
-  if (usersData) {
-    // Converte os dados de usuários de uma string JSON para um objeto JavaScript
-    var users = JSON.parse(usersData);
-
-    // Encontra o índice do usuário com base no userId
-    var userIndex = users.findIndex(function(user) {
-      return user.id === userId;
-    });
-
-    // Verifica se o usuário foi encontrado
-    if (userIndex !== -1) {
-      // Remove o usuário do array de usuários
-      users.splice(userIndex, 1);
-
-      // Atualiza os dados de usuários na sessionStorage
-      sessionStorage.setItem('users', JSON.stringify(users));
-
-      // Recarrega a página para refletir a remoção do usuário
+  fetch(`/api/users/${userId}`, { method: 'DELETE' })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data.message);
+      logout();
       location.reload();
-    }
-  }
+    })
+    .catch((error) => {
+      console.error('Error deleting user:', error);
+    });
 }
 
-function populateUsersList(){
-  // Obtém os dados de usuários armazenados na sessionStorage
-  var usersData = sessionStorage.getItem('users');
-  // Verifica se há dados de usuários armazenados
-  if (usersData) {
-    // Converte os dados de usuários de uma string JSON para um objeto JavaScript
-    var users = JSON.parse(usersData);
+// Função para popular a lista de usuários
+function populateUsersList() {
+  fetch('/api/users')
+    .then((response) => response.json())
+    .then((users) => {
+      var usersList = document.querySelector('.users-info');
 
-    // Seleciona o elemento HTML onde a lista de usuários será exibida
-    var usersList = document.querySelector('.users-info');
+      if (users.length > 0) {
+        var userListElement = document.createElement('ul');
 
-    // Verifica se há usuários para exibir
-    if (users.length > 0) {
-      // Cria uma lista não ordenada para exibir os usuários
-      var userListElement = document.createElement('ul');
+        users.forEach(function (user) {
+          var userItem = document.createElement('li');
+          userItem.textContent = 'ID: ' + user._id + ', Name: ' + user.name + ', Email: ' + user.email;
 
-      // Itera sobre cada usuário e cria um item de lista para cada um
-      users.forEach(function(user) {
-        var userItem = document.createElement('li');
-        userItem.textContent = 'ID: ' + user.id + ', Name: ' + user.name + ', Email: ' + user.email;
+          var deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Delete';
+          deleteButton.classList.add('button');
+          deleteButton.addEventListener('click', function () {
+            deleteUser(user._id);
+          });
+          userItem.appendChild(deleteButton);
 
-        // Cria botão de deletar
-        var deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.classList.add('button');
-        deleteButton.addEventListener('click', function() {
-          // Chama a função para deletar o usuário
-          deleteUser(user.id);
+          var editButton = document.createElement('button');
+          editButton.textContent = 'Edit';
+          editButton.classList.add('button');
+          editButton.addEventListener('click', function () {
+            window.location.href = '/edit-profile';
+          });
+          userItem.appendChild(editButton);
+
+          userListElement.appendChild(userItem);
         });
-        userItem.appendChild(deleteButton);
 
-        // Cria botão de editar
-        var editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.classList.add('button');
-        editButton.addEventListener('click', function() {
-          // Redireciona para a página de edição do perfil do usuário
-          window.location.href = '/edit-profile';
-        });
-        userItem.appendChild(editButton);
-
-        userListElement.appendChild(userItem);
-      });
-
-      // Adiciona a lista de usuários ao elemento HTML
-      usersList.appendChild(userListElement);
-    } else {
-      // Caso não haja usuários, exibe uma mensagem informando isso
-      usersList.textContent = 'No users found.';
-    }
-  } else {
-    // Caso não haja dados de usuários armazenados, exibe uma mensagem informando isso
-    var usersList = document.querySelector('.users-info');
-    usersList.textContent = 'No user data found in sessionStorage.';
-  }
+        usersList.appendChild(userListElement);
+      } else {
+        usersList.textContent = 'No users found.';
+      }
+    })
+    .catch((error) => {
+      console.error('Error retrieving users:', error);
+    });
 }
 
 function handleAdminUI(){
-  // Verificar se há um usuário logado no session Storage
-  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-  // Obter a lista de usuários do session Storage
-  var userList = JSON.parse(sessionStorage.getItem("users"));
-
   const editButton = document.querySelector('.edit-game-button');
   const addButton = document.querySelector('.add-game-button');
   if(editButton){
@@ -754,18 +552,19 @@ function handleAdminUI(){
   if(addButton){
     addButton.style.visibility = 'hidden';
   }
+  adminLink.style.display = "none";
 
-  // Verificar se o usuário está logado
-  if (loggedInUserId != null) {
-      // Procurar o usuário logado na lista de usuários
-      var user = userList.find(function (user) {
-          return user.id == loggedInUserId;
-      });
+  // Verificar se há um usuário logado no Session Storage
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
-      // Verificar se o usuário foi encontrado
-      if (user) {
+  if (loggedInUserId) {
+    // Enviar uma solicitação GET para obter os dados do perfil do usuário
+    fetch('/profile/' + loggedInUserId)
+      .then(response => response.json())
+      .then(data => {
         // verificar se o usuario e admin
-        if(user.isAdmin){
+        if (data.user.isAdmin) {
+          adminLink.style.display = "block"; // Exibe o link "User Profile"
           if(editButton){
             editButton.style.visibility = 'visible';
           }
@@ -773,76 +572,230 @@ function handleAdminUI(){
             addButton.style.visibility = 'visible';
           }
         }
-      }
+      })
+      .catch(error => {
+        console.error('Error retrieving user profile:', error);
+        alert("Failed to retrieve user profile. Please try again.");
+      });
   }
 }
 
-function loginListener(){
+function loginListener() {
   document.getElementById("loginForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+    e.preventDefault();
 
-      // Obter os valores do formulário
-      var email = document.getElementById("email").value;
-      var password = document.getElementById("password").value;
+    // Obter os valores do formulário
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
 
-      // Obter a matriz de usuários do session Storage
-      var users = JSON.parse(sessionStorage.getItem("users")) || [];
+    // Fazer uma requisição para o backend para verificar o login do usuário
+    fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.loggedIn) {
+          var loggedInUserId = data.userId;
 
-      // Verificar se existe um usuário com o email e senha fornecidos
-      var loggedInUser = users.find(function (user) {
-          return user.email === email && user.password === password;
-      });
-
-      if (loggedInUser) {
           // Salvar o ID do usuário logado no session Storage
-          sessionStorage.setItem("loggedInUserId", JSON.stringify(loggedInUser.id));
+          sessionStorage.setItem("loggedInUserId", JSON.stringify(loggedInUserId));
 
           window.location.href = "/";
-      } else {
+        } else {
           alert("Invalid email or password. Please try again.");
-      }
+        }
+      })
+      .catch((error) => {
+        console.error("Error logging in:", error);
+        alert("An error occurred while logging in. Please try again.");
+      });
   });
 }
 
-function registerListener(){
-  document.getElementById("registerForm").addEventListener("submit", function (e) {
-      e.preventDefault();
 
-      var name = document.getElementById("name").value;
-      var email = document.getElementById("email").value;
-      var phone = document.getElementById("phone").value;
-      var password = document.getElementById("password").value;
+function registerListener() {
+  document.getElementById("registerForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      // Verificar se já existe um usuário com o mesmo email ou telefone
-      var users = JSON.parse(sessionStorage.getItem("users")) || [];
-      var existingUser = users.find(function (user) {
-          return user.email === email || user.phone === phone;
-      });
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var phone = document.getElementById("phone").value;
+    var password = document.getElementById("password").value;
 
-      if (existingUser) {
-          alert("User with the same email or phone already exists.");
-          return;
-      }
-
-      // Criar um novo objeto de usuário
-      var newUser = {
-          id: phone,
-          isAdmin: false,
+    // Realizar uma chamada de API para registrar o usuário no servidor
+    try {
+      const response = await fetch('/registerUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           name: name,
           email: email,
           phone: phone,
           password: password
-      };
+        })
+      });
 
-      // Adicionar o novo usuário à matriz
-      users.push(newUser);
+      const data = await response.json();
 
-      // Armazenar a matriz de usuários atualizada no session Storage
-      sessionStorage.setItem("users", JSON.stringify(users));
+      if (response.ok) {
+        alert(data.message);
+        window.location.href = "/login"; // Redirecionar para a página de login ou qualquer outra página necessária
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to register user');
+    }
+  });
+}
 
-      alert("Registration successful. You can now login.");
+function updateUserProfile() {
+  // Verificar se há um usuário logado no Session Storage
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
-      // Redirecionar para a página de login ou qualquer outra página necessária
-      window.location.href = "/login";
+  if (loggedInUserId) {
+    // Enviar uma solicitação GET para obter os dados do perfil do usuário
+    fetch('/profile/' + loggedInUserId)
+      .then(response => response.json())
+      .then(data => {
+        if (data.user) {
+          var user = data.user;
+
+          // Preencher os campos do formulário com os dados do usuário
+          if (document.getElementById("userName")) { // se estiver na página de perfil
+            document.getElementById("userId").textContent = user._id;
+            document.getElementById("isAdmin").textContent = user.isAdmin;
+            document.getElementById("userName").textContent = user.name;
+            document.getElementById("userEmail").textContent = user.email;
+            document.getElementById("userPhone").textContent = user.phone;
+          }
+
+          if (document.getElementById("name")) { // se estiver na página de edição de perfil
+            document.getElementById("id").value = user._id;
+            document.getElementById("isAdmin").checked = user.isAdmin;
+            document.getElementById("name").value = user.name;
+            document.getElementById("email").value = user.email;
+            document.getElementById("phone").value = user.phone;
+          }
+        } else {
+          // Redirecionar para a página de login se o usuário não for encontrado
+          window.location.href = "/login";
+        }
+      })
+      .catch(error => {
+        console.error('Error retrieving user profile:', error);
+        alert("Failed to retrieve user profile. Please try again.");
+      });
+  } else {
+    // Redirecionar para a página de login se o usuário não estiver logado
+    window.location.href = "/login";
+  }
+}
+
+// Atualizar o perfil do usuário
+function handleProfileEdit() {
+  // Verificar se há um usuário logado no session Storage
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+  document.getElementById("editProfileForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    
+    var updatedName = document.getElementById("name").value;
+    var updatedEmail = document.getElementById("email").value;
+    var updatedPhone = document.getElementById("phone").value;
+
+    // Verificar se todos os campos foram preenchidos
+    if (updatedName && updatedEmail && updatedPhone) {
+      // Enviar uma solicitação PUT para atualizar o perfil do usuário
+      fetch('/profile/' + loggedInUserId, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: updatedName, email: updatedEmail, phone: updatedPhone })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === "User profile updated successfully.") {
+            alert("Profile saved successfully.");
+            // Redirecionar para a página de perfil ou qualquer outra página necessária
+            window.location.href = "/user-profile";
+          } else {
+            alert("Failed to update user profile. Please try again.");
+          }
+        })
+        .catch(error => {
+          console.error('Error updating user profile:', error);
+          alert("Failed to update user profile. Please try again.");
+        });
+    } else {
+      alert("Please fill in all fields.");
+    }
+  })
+}
+
+
+function toggleUserProfileLink() {
+    var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+    if (loggedInUserId != null) {
+      userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+    } else {
+      userProfileLink.style.display = "none"; // Oculta o link "User Profile"
+    }
+}
+
+function handleCheckout() { 
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+  if (loggedInUserId == null) {
+    window.location.href = "/login";
+  }
+  
+  if (!document.querySelector('.cart-item')) {
+    alert('Voce não possui nenhum item no carrinho.');
+    window.location.href = "/index";
+  }
+
+  const paymentMethods = `
+  <h2>Payments</h2>
+  <ul id='list-checkboxes' class='checkout-options'>
+    <li class='type-card'>
+      <input type='checkbox' value='card'>
+      <label>Credit/Debit Card</label>
+    </li>
+    <li class='type-paypal'>
+      <input type='checkbox' value='paypal'>
+      <label>Paypal</label>
+    </li>
+    <li class='type-pix'>
+      <input type='checkbox' value='pix'>
+      <label>Pix</label>
+    </li>
+  </ul>`;
+
+  document.querySelector('.checkout-options').innerHTML = paymentMethods;
+
+  let checkboxes = document.querySelectorAll('#list-checkboxes input[type="checkbox"]');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      document.querySelector('.checkout-info').innerHTML = ''; // retira o pagamento q estava antes
+      document.querySelector('.checkout-confirm').innerHTML = '';
+      if (this.checked) {
+        checkboxes.forEach(function(otherCheckbox) {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.checked = false;
+          }
+        });
+        showPaymentMethod(this);
+      }
+    });
   });
 }
