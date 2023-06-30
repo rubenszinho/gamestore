@@ -190,6 +190,18 @@ async function populatePage() {
       document.getElementById("editGameForm").addEventListener("submit", addGame);
       break;
 
+    case '/admin-game-edit':
+      populateGameEdit(gameId);
+      document.getElementById("editGameForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        updateGame(gameId);
+      });
+      document.getElementById("game-delete-button").addEventListener("click", (e) => {
+        e.preventDefault();
+        deleteGame(gameId);
+      });
+      break;
+
     default:
       //handleAdminUI();
       //await populateHomePage()
@@ -244,6 +256,7 @@ async function populateGameDetailsPage(gameId) {
 
       document.querySelector('.button').setAttribute('game-id', gameId);
       document.querySelector('.button').onclick = () => addToCart(event);
+      document.querySelector('.edit-game-button').onclick = () => onEditClick(gameId);
     } else {
       console.error('Error getting game:', response.status);
       // Handle error case when game is not found
@@ -365,6 +378,10 @@ function onSearchEnter(event) {
 function onGameClick(event) {
   const gameId = event.currentTarget.getAttribute('game-id');
   window.location.href = `/game-details?id=${encodeURIComponent(gameId)}`;
+}
+
+function onEditClick(gameId) {
+  window.location.href = `/admin-game-edit?id=${encodeURIComponent(gameId)}`;
 }
 
 function addToCart(event) {
@@ -877,3 +894,66 @@ function addGame(event) {
     });
 }
 
+async function populateGameEdit(gameId) {
+  try {
+    const response = await fetch(`/games/id/${gameId}`);
+    if (!response.ok) {
+      throw new Error('Game not found');
+    }
+    const game = await response.json();
+
+    document.getElementById('name').value = game.name;
+    document.getElementById('description').value = game.description;
+    document.getElementById('price').value = game.price;
+    // Aqui você pode definir os valores iniciais para outros campos do formulário, se necessário.
+
+  } catch (error) {
+    console.error('Error setting initial values:', error);
+    // Lógica para lidar com o erro, como exibir uma mensagem de erro na página.
+  }
+}
+
+async function updateGame(gameId) {
+  try {
+    const name = document.getElementById('name').value;
+    const description = document.getElementById('description').value;
+    const price = document.getElementById('price').value;
+
+    const updatedData = {
+      name: name,
+      description: description,
+      price: parseFloat(price)
+      // Adicione outras propriedades que você deseja atualizar
+    };
+
+    const response = await fetch(`/games/id/${gameId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updatedData)
+    });
+
+    window.location.href = `/game-details?id=${gameId}`;
+  } catch (error) {
+    console.error('Error updating game:', error);
+    // Lógica para lidar com o erro, como exibir uma mensagem de erro na página.
+  }
+}
+
+async function deleteGame(gameId) {
+  try {
+    const response = await fetch(`/games/id/${gameId}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      throw new Error('Error deleting game');
+    }
+
+    window.location.href = "/";
+  } catch (error) {
+    console.error('Error deleting game:', error);
+    // Lógica para lidar com o erro, como exibir uma mensagem de erro na página.
+  }
+}
