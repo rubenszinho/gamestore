@@ -340,7 +340,6 @@ app.post('/games/add', upload.single('image'), async (req, res) => {
       quantidade: quantidade,
       description: description,
       image: image,
-      // image: "batata",
       isFeatured: isFeatured,
       isGameOfTheYear: isGameOfTheYear,
       genre: genre,
@@ -408,20 +407,42 @@ app.get('/games/id/:id', async (req, res) => {
   }
 });
 
-// Rota para atualizar um jogo existente
-app.put('/games/id/:id', async (req, res) => {
+app.put('/games/id/:id', upload.single('image'), async (req, res) => {
   try {
-    const game = await Game.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (game) {
-      res.json(game);
-    } else {
-      res.status(404).json({ message: 'Game not found' });
+    const gameId = req.params.id;
+    const { name, price, quantidade, description, isFeatured, isGameOfTheYear, genre, platform } = req.body;
+    const image = req.file ? req.file.buffer : null; // Verifique se uma nova imagem foi enviada
+
+    // Verifique se o jogo existe
+    const game = await Game.findById(gameId);
+    if (!game) {
+      return res.status(404).json({ message: 'Game not found' });
     }
+
+    // Atualize os campos do jogo com os valores fornecidos
+    game.name = name;
+    game.price = price;
+    game.quantidade = quantidade;
+    game.description = description;
+    game.isFeatured = isFeatured;
+    game.isGameOfTheYear = isGameOfTheYear;
+    game.genre = genre;
+    game.platform = platform;
+
+    // Atualize a imagem se uma nova imagem foi enviada
+    if (image) {
+      game.image = image;
+    }
+
+    // Salve as alterações no banco de dados
+    const updatedGame = await game.save();
+    res.json(updatedGame);
   } catch (error) {
     console.error('Error updating game:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 // Rota para excluir um jogo
 app.delete('/games/id/:id', async (req, res) => {

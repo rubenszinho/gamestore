@@ -915,31 +915,46 @@ async function populateGameEdit(gameId) {
 
 async function updateGame(gameId) {
   try {
-    const name = document.getElementById('name').value;
-    const description = document.getElementById('description').value;
-    const price = document.getElementById('price').value;
+    const id = document.getElementById("_id").value;
+    const name = document.getElementById("name").value;
+    const description = document.getElementById("description").value;
+    const price = document.getElementById("price").value;
+    const quantidade = document.getElementById("quantidade").value;
+    const isGameOfTheYear = document.getElementById("isGameOfTheYear").checked;
+    const isFeatured = document.getElementById("isFeatured").checked;
+    const genre = document.getElementById("genre").value;
+    const platform = document.getElementById("platform").value;
+    const image = document.getElementById("image").files[0];
 
-    const updatedData = {
-      name: name,
-      description: description,
-      price: parseFloat(price)
-      // Adicione outras propriedades que você deseja atualizar
-    };
+    const formData = new FormData();
+    formData.append("_id", id);
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("price", price);
+    formData.append("quantidade", quantidade);
+    formData.append("isGameOfTheYear", isGameOfTheYear);
+    formData.append("isFeatured", isFeatured);
+    formData.append("genre", genre);
+    formData.append("platform", platform);
+    formData.append("image", image);
 
     const response = await fetch(`/games/id/${gameId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatedData)
+      method: "PUT",
+      body: formData,
     });
 
+    if (!response.ok) {
+      throw new Error("Failed to update game");
+    }
+
+    // Redirecionar para a página de detalhes do jogo
     window.location.href = `/game-details?id=${gameId}`;
   } catch (error) {
-    console.error('Error updating game:', error);
+    console.error("Error updating game:", error);
     // Lógica para lidar com o erro, como exibir uma mensagem de erro na página.
   }
 }
+
 
 async function deleteGame(gameId) {
   try {
