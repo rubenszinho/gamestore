@@ -36,20 +36,44 @@
             <h1 class="title">Add Game</h1>
             <form id="editGameForm" class="edit-game-form">
                 <div>
+                    <label for="_id">Game ID</label>
+                    <input type="number" id="_id" class="edit-profile-input" required />
+                </div>
+                <div>
                     <label for="name">Game Name</label>
                     <input type="text" id="name" class="edit-profile-input" required />
                 </div>
                 <div>
-                    <label for="email">Game Description</label>
+                    <label for="price">Game Price</label>
+                    <input type="number" id="price" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <label for="quantidade">Game Quantity</label>
+                    <input type="number" id="quantidade" class="edit-profile-input" required />
+                </div>
+                <div>
+                    <label for="description">Game Description</label>
                     <input type="text" id="description" class="edit-profile-input" required />
                 </div>
                 <div>
-                    <label for="phone">Game Price</label>
-                    <input type="text" id="price" class="edit-profile-input" required />
+                    <label for="game-thumbnail">Game Image</label>
+                    <input type="file" id="game-thumbnail" name="image" accept="image/*" required><br>
                 </div>
                 <div>
-                    <label for="game-thumbnail">Game Thumbnail:</label>
-                    <input type="file" id="game-thumbnail" name="game-thumbnail" accept="image/*" required><br>
+                    <label for="isGameOfTheYear">Is Game of the Year?</label>
+                    <input type="checkbox" id="isGameOfTheYear" class="edit-profile-input">
+                </div>
+                <div>
+                    <label for="isFeatured">Is Featured?</label>
+                    <input type="checkbox" id="isFeatured" class="edit-profile-input">
+                </div>
+                <div>
+                    <label for="genre">Genre(s)</label>
+                    <input type="text" id="genre" class="edit-profile-input" />
+                </div>
+                <div>
+                    <label for="platform">Platform(s)</label>
+                    <input type="text" id="platform" class="edit-profile-input" />
                 </div>
                 <div>
                     <button type="submit" class="button">Submit</button>
