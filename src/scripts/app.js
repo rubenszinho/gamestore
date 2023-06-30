@@ -321,6 +321,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+const mongooseFuzzySearching = require('mongoose-fuzzy-searching');
+gameSchema.plugin(mongooseFuzzySearching, {fields: ['name', 'description']});
+
 const Game = mongoose.model('Game', gameSchema);
 
 // Rota para adicionar um novo jogo
@@ -371,22 +374,24 @@ app.get('/games/image/:id', async (req, res) => {
   }
 });
 
-// Rota para buscar jogos por texto
 app.get('/games/search/:text', async (req, res) => {
   try {
     const searchText = req.params.text;
     let searchResults;
-    if(searchText == "*"){
+
+    if (searchText == '*') {
       searchResults = await Game.find();
-    }else {
-      searchResults = await Game.find({ name: searchText } );
+    } else {
+      searchResults = await Game.fuzzySearch(searchText); // Use o método fuzzySearch para pesquisar o texto fuzzy
     }
+
     res.json(searchResults);
   } catch (error) {
     console.error('Error searching games:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 // Rota para obter um jogo específico por ID
 app.get('/games/id/:id', async (req, res) => {
