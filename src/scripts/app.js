@@ -89,7 +89,11 @@ const userSchema = new mongoose.Schema({
   name: String,
   email: String,
   phone: Number,
-  password: String
+  password: String,
+  cart: {
+    type: [Number],
+    default: []
+  }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -214,5 +218,225 @@ app.get('/api/users', async (req, res) => {
   } catch (error) {
     console.error('Error retrieving users:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+const gameSchema = new mongoose.Schema({
+  _id: {
+    type: Number,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  quantidade: {
+    type: Number,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  image: {
+    type: String,
+    required: true
+  },
+  isGameOfTheYear: {
+    type: Boolean,
+    default: false
+  },
+  emDestaque: {
+    type: Boolean,
+    default: false
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Game = mongoose.model('Game', gameSchema);
+
+// Rota para obter todos os jogos
+app.get('/games', async (req, res) => {
+  try {
+    const games = await Game.find();
+    res.json(games);
+  } catch (error) {
+    console.error('Error getting games:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Rota para obter um jogo específico por ID
+app.get('/games/:id', async (req, res) => {
+  try {
+    const game = await Game.findById(req.params.id);
+    if (game) {
+      res.json(game);
+    } else {
+      res.status(404).json({ message: 'Game not found' });
+    }
+  } catch (error) {
+    console.error('Error getting game:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Rota para adicionar um novo jogo
+app.post('/games/add', async (req, res) => {
+  try {
+    const { name, price, quantidade, description, image } = req.body;
+
+    // Criar um novo objeto de usuário
+    const newGame = new Game({
+      _id: price,
+      name: name,
+      price: price,
+      quantidade: quantidade,
+      description: description,
+      image: image
+    });
+
+    // Salvar o novo usuário no banco de dados
+    await newGame.save();
+    res.status(200).json({ message: "Game added." });
+  } catch (error) {
+    console.error('Error creating game:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Rota para atualizar um jogo existente
+app.put('/games/:id', async (req, res) => {
+  try {
+    const game = await Game.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (game) {
+      res.json(game);
+    } else {
+      res.status(404).json({ message: 'Game not found' });
+    }
+  } catch (error) {
+    console.error('Error updating game:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Rota para excluir um jogo
+app.delete('/games/:id', async (req, res) => {
+  try {
+    const game = await Game.findByIdAndDelete(req.params.id);
+    if (game) {
+      res.json({ message: 'Game deleted' });
+    } else {
+      res.status(404).json({ message: 'Game not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting game:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Rota para obter os últimos 8 jogos adicionados
+app.get('/games/latest', async (req, res) => {
+  try {
+    const games = await Game.find().sort({ createdAt: -1 }).limit(8);
+    res.json(games);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Rota para obter os 5 jogos em destaque
+app.get('/games/featured', async (req, res) => {
+  try {
+    const games = await Game.find({ emDestaque: true }).limit(5);
+    res.json(games);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Rota para obter os 8 jogos top do ano
+app.get('/games/top', async (req, res) => {
+  try {
+    const games = await Game.find({ isGameOfTheYear: true }).limit(8);
+    res.json(games);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+// Rota para obter a lista do carrinho de um usuário
+app.get('/users/:userId/cart', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user.cart);
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving user cart' });
+  }
+});
+
+// Rota para adicionar um jogo ao carrinho de um usuário
+app.post('/users/:userId/cart/add/:gameId', async (req, res) => {
+  const userId = req.params.userId;
+  const gameId = req.params.gameId;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.cart.push(gameId);
+    await user.save();
+    res.json({ message: `Game ${gameId} added to cart` });
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding game to user cart' });
+  }
+});
+
+// Rota para remover um jogo do carrinho de um usuário
+app.delete('/users/:userId/cart/:gameId', async (req, res) => {
+  const userId = req.params.userId;
+  const gameId = req.params.gameId;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.cart.pop(gameId);
+    await user.save();
+    res.json({ message: 'Game removed from cart' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing game from user cart' });
+  }
+});
+
+app.delete('/users/:userId/cart/all', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    // Atualizar o documento do usuário para remover os itens do carrinho
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.updateOne({cart: []});
+
+    res.status(200).json({ message: 'Checkout confirmed. Cart items cleared.' });
+  } catch (error) {
+    console.error('Error confirming checkout:', error);
+    res.status(500).json({ error: 'An error occurred while confirming the checkout.' });
   }
 });
