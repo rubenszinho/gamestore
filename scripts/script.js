@@ -864,16 +864,26 @@ function addGame(event) {
   event.preventDefault();
 
   // Obter os valores dos campos do formulário
+  var id = document.getElementById("_id").value;
   var name = document.getElementById("name").value;
   var description = document.getElementById("description").value;
   var price = document.getElementById("price").value;
   var image = document.getElementById("game-thumbnail").files[0];
+  var isFeatured = document.getElementById("isFeatured").checked;
+  var isGameOfTheYear = document.getElementById("isGameOfTheYear").checked;
+  var genre = document.getElementById("genre").value;
+  var platform = document.getElementById("platform").value;
 
   var formData = new FormData();
+  formData.append("id", id);
   formData.append("name", name);
   formData.append("description", description);
   formData.append("price", price);
   formData.append("quantidade", 100);
+  formData.append("isFeatured", isFeatured);
+  formData.append("isGameOfTheYear", isGameOfTheYear);
+  formData.append("genre", genre);
+  formData.append("platform", platform);
   formData.append("image", image);
 
   // Enviar uma requisição POST para a rota de adicionar jogo
@@ -902,10 +912,15 @@ async function populateGameEdit(gameId) {
     }
     const game = await response.json();
 
+    document.getElementById("_id").value = game._id
     document.getElementById('name').value = game.name;
     document.getElementById('description').value = game.description;
     document.getElementById('price').value = game.price;
-    // Aqui você pode definir os valores iniciais para outros campos do formulário, se necessário.
+    document.getElementById('quantidade').value = game.quantidade;
+    document.getElementById('isGameOfTheYear').checked = game.isGameOfTheYear;
+    document.getElementById('isFeatured').checked = game.isFeatured;
+    document.getElementById('genre').value = game.genre;
+    document.getElementById('platform').value = game.platform;
 
   } catch (error) {
     console.error('Error setting initial values:', error);

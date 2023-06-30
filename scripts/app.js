@@ -250,13 +250,21 @@ const gameSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  emDestaque: {
+  isFeatured: {
     type: Boolean,
     default: false
   },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  genre: {
+    type: String,
+    default: ""
+  },
+  platform: {
+    type: String,
+    default: ""
   }
 });
 
@@ -309,20 +317,22 @@ app.get('/games/id/:id', async (req, res) => {
 // Rota para adicionar um novo jogo
 app.post('/games/add', upload.single('image'), async (req, res) => {
   try {
-    const { name, price, quantidade, description} = req.body;
+    const { id, name, price, quantidade, description, isFeatured, isGameOfTheYear, genre, platform} = req.body;
     const image = req.file.buffer;
 
     // Criar um novo objeto de usuário
     const newGame = new Game({
-      _id: price,
+      _id: id,
       name: name,
       price: price,
       quantidade: quantidade,
       description: description,
       //image: image,
       image: "batata",
-      emDestaque: true,
-      isGameOfTheYear: true,
+      isFeatured: isFeatured,
+      isGameOfTheYear: isGameOfTheYear,
+      genre: genre,
+      platform: platform
     });
 
     // Salvar o novo usuário no banco de dados
