@@ -122,6 +122,7 @@ const createDefaultAdminUser = async () => {
     } else {
       console.log('Usuário admin já existe no banco de dados.');
     }
+    console.log('Usuário admin: email: admin@admin.com, senha: admin');
   } catch (error) {
     console.error('Ocorreu um erro ao criar o usuário admin padrão:', error);
   }
