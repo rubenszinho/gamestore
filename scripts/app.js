@@ -221,6 +221,16 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// Rota para obter a quantidade de jogos cadastrados
+app.get('/users/count', async (req, res) => {
+  try {
+    const count = await User.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: 'Ocorreu um erro ao obter a quantidade de usuarios.' });
+  }
+});
+
 const gameSchema = new mongoose.Schema({
   _id: {
     type: Number,
@@ -404,6 +414,15 @@ app.get('/games/top', async (req, res) => {
   }
 });
 
+// Rota para obter a quantidade de jogos cadastrados
+app.get('/games/count', async (req, res) => {
+  try {
+    const count = await Game.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: 'Ocorreu um erro ao obter a quantidade de jogos.' });
+  }
+});
 
 // Rota para obter a lista do carrinho de um usuário
 app.get('/users/:userId/cart', async (req, res) => {

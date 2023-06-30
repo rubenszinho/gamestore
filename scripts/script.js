@@ -1,38 +1,78 @@
-const gridContainer = document.querySelector('.grid-container');
-let currentTheme = "light";
-
-// INICIALIZA A PAGINA ATUAL
+/* Inicializa a pagina */
 populatePage();
 
-function setTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  // Definir um cookie com o tema selecionado que expira em 365 dias
-  document.cookie = `currentTheme=${theme}; expires=${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()}`;
-}
+async function populatePage() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const searchText = searchParams.get('search');
+  const id = searchParams.get('id');
+  const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'))
 
-function getTheme() {
-  // Obter o valor do cookie "currentTheme"
-  const cookies = document.cookie.split(";").map(cookie => cookie.trim());
-  for (const cookie of cookies) {
-    if (cookie.startsWith("currentTheme=")) {
-      return cookie.substring("currentTheme=".length);
-    }
+  switch (pagName) {
+    case '/search':
+      await populateSearchPage(searchText);
+      break;
+    
+    case '/game-details':
+      // handleAdminUI();
+      await populateGameDetailsPage(id)
+      break;
+
+    case '/my-cart':
+      await populateCartPage()
+      break;
+
+    case '/':
+      // handleAdminUI();
+      await populateHomePage()
+      break;
+
+    case '/user-profile':
+      updateUserProfile(id);
+      break;
+
+    case '/edit-profile':
+      updateUserProfile(id);
+      handleProfileEdit(id);
+      break;
+
+    case '/admin-users-list':
+      populateUsersList();
+      break;
+
+    case '/admin-page':
+      populateAdminPage();
+      break;
+
+    case '/login':
+      loginListener();
+      break;
+
+    case '/register':
+      registerListener();
+      break;
+
+    case '/admin-game-add':
+      document.getElementById("editGameForm").addEventListener("submit", addGame);
+      break;
+
+    case '/admin-game-edit':
+      populateGameEdit(id);
+      document.getElementById("editGameForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        updateGame(id);
+      });
+      document.getElementById("game-delete-button").addEventListener("click", (e) => {
+        e.preventDefault();
+        deleteGame(id);
+      });
+      break;
+
+    default:
+      //handleAdminUI();
+      //await populateHomePage()
+      break;
   }
-  return null;
 }
-
-function toggleTheme() {
-  const currentTheme = getTheme();
-  const newTheme = currentTheme === "light" ? "dark" : "light";
-  setTheme(newTheme);
-}
-
-window.addEventListener("DOMContentLoaded", function () {
-  const currentTheme = getTheme();
-  if (currentTheme) {
-    setTheme(currentTheme);
-  }
-});
 
 function createGameCard(game) {
   const gameCard = document.createElement('div');
@@ -137,76 +177,6 @@ function createCartItem(game) {
   item.appendChild(cartItemRemoveButton)
 
   return item
-}
-
-
-async function populatePage() {
-  const searchParams = new URLSearchParams(window.location.search);
-  const searchText = searchParams.get('search');
-  const gameId = searchParams.get('id');
-  const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'))
-
-  switch (pagName) {
-    case '/search':
-      await populateSearchPage(searchText);
-      break;
-    
-    case '/game-details':
-      // handleAdminUI();
-      await populateGameDetailsPage(gameId)
-      break;
-
-    case '/my-cart':
-      await populateCartPage()
-      break;
-
-    case '/':
-      // handleAdminUI();
-      await populateHomePage()
-      break;
-
-    case '/user-profile':
-      updateUserProfile();
-      break;
-
-    case '/edit-profile':
-      updateUserProfile();
-      handleProfileEdit();
-      break;
-
-    case '/admin-users-list':
-      populateUsersList();
-      break;
-
-    case '/login':
-      loginListener();
-      break;
-
-    case '/register':
-      registerListener();
-      break;
-
-    case '/admin-game-add':
-      document.getElementById("editGameForm").addEventListener("submit", addGame);
-      break;
-
-    case '/admin-game-edit':
-      populateGameEdit(gameId);
-      document.getElementById("editGameForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        updateGame(gameId);
-      });
-      document.getElementById("game-delete-button").addEventListener("click", (e) => {
-        e.preventDefault();
-        deleteGame(gameId);
-      });
-      break;
-
-    default:
-      //handleAdminUI();
-      //await populateHomePage()
-      break;
-  }
 }
 
 async function populateSearchPage(searchText) {
@@ -399,12 +369,9 @@ function addToCart(event) {
     });
 }
 
-
 // Chamada da função ao carregar a página
 window.addEventListener("load", toggleUserProfileLink);
 window.addEventListener("load", handleAdminUI);
-
-
 
 function showPaymentMethod(checkbox) {
   switch (checkbox.value) {
@@ -536,7 +503,6 @@ function confirmCheckout() {
     });
 }
 
-
 function logout() {
   // Salvar o usuário atualizado no session Storage
   sessionStorage.setItem("loggedInUserId", null);
@@ -585,7 +551,7 @@ function populateUsersList() {
           editButton.textContent = 'Edit';
           editButton.classList.add('button');
           editButton.addEventListener('click', function () {
-            window.location.href = '/edit-profile';
+            window.location.href = `/edit-profile?id=${user._id}`;
           });
           userItem.appendChild(editButton);
 
@@ -639,6 +605,31 @@ function handleAdminUI(){
   }
 }
 
+function populateAdminPage() {
+  const numJogosElement = document.getElementById('numJogos');
+  const numUsersElement = document.getElementById('numUsers');
+
+  // Obter a quantidade de jogos cadastrados
+  fetch('/games/count')
+    .then(response => response.json())
+    .then(data => {
+      if (data.count) {
+        numJogosElement.textContent = `Jogos cadastrados: ${data.count}`;
+      }
+    })
+    .catch(error => console.error('Erro ao obter a quantidade de jogos:', error));
+
+  // Obter a quantidade de usuários cadastrados
+  fetch('/users/count')
+    .then(response => response.json())
+    .then(data => {
+      if (data.count) {
+        numUsersElement.textContent = `Usuários cadastrados: ${data.count}`;
+      }
+    })
+    .catch(error => console.error('Erro ao obter a quantidade de usuários:', error));
+}
+
 function loginListener() {
   document.getElementById("loginForm").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -674,7 +665,6 @@ function loginListener() {
       });
   });
 }
-
 
 function registerListener() {
   document.getElementById("registerForm").addEventListener("submit", async function (e) {
@@ -715,13 +705,10 @@ function registerListener() {
   });
 }
 
-function updateUserProfile() {
-  // Verificar se há um usuário logado no Session Storage
-  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
-  if (loggedInUserId) {
+function updateUserProfile(userId) {
+  if (userId ) {
     // Enviar uma solicitação GET para obter os dados do perfil do usuário
-    fetch('/profile/' + loggedInUserId)
+    fetch('/profile/' + userId )
       .then(response => response.json())
       .then(data => {
         if (data.user) {
@@ -734,6 +721,7 @@ function updateUserProfile() {
             document.getElementById("userName").textContent = user.name;
             document.getElementById("userEmail").textContent = user.email;
             document.getElementById("userPhone").textContent = user.phone;
+            document.getElementById("editProfileButton").href = `/edit-profile?id=${user._id}`;
           }
 
           if (document.getElementById("name")) { // se estiver na página de edição de perfil
@@ -759,10 +747,7 @@ function updateUserProfile() {
 }
 
 // Atualizar o perfil do usuário
-function handleProfileEdit() {
-  // Verificar se há um usuário logado no session Storage
-  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
-
+function handleProfileEdit(userId) {
   document.getElementById("editProfileForm").addEventListener("submit", (e) => {
     e.preventDefault();
     
@@ -773,7 +758,7 @@ function handleProfileEdit() {
     // Verificar se todos os campos foram preenchidos
     if (updatedName && updatedEmail && updatedPhone) {
       // Enviar uma solicitação PUT para atualizar o perfil do usuário
-      fetch('/profile/' + loggedInUserId, {
+      fetch('/profile/' + userId , {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -800,12 +785,12 @@ function handleProfileEdit() {
   })
 }
 
-
 function toggleUserProfileLink() {
     var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
     if (loggedInUserId != null) {
       userProfileLink.style.display = "block"; // Exibe o link "User Profile"
+      userProfileLink.href = `/user-profile?id=${loggedInUserId}`;
     } else {
       userProfileLink.style.display = "none"; // Oculta o link "User Profile"
     }
@@ -972,3 +957,36 @@ async function deleteGame(gameId) {
     // Lógica para lidar com o erro, como exibir uma mensagem de erro na página.
   }
 }
+
+/* TEMA */
+let currentTheme = "light";
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  // Definir um cookie com o tema selecionado que expira em 365 dias
+  document.cookie = `currentTheme=${theme}; expires=${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()}; SameSite=Strict`;
+}
+
+function getTheme() {
+  // Obter o valor do cookie "currentTheme"
+  const cookies = document.cookie.split(";").map(cookie => cookie.trim());
+  for (const cookie of cookies) {
+    if (cookie.startsWith("currentTheme=")) {
+      return cookie.substring("currentTheme=".length);
+    }
+  }
+  return null;
+}
+
+function toggleTheme() {
+  const currentTheme = getTheme();
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+  setTheme(newTheme);
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+  const currentTheme = getTheme();
+  if (currentTheme) {
+    setTheme(currentTheme);
+  }
+});
