@@ -103,11 +103,10 @@ function createBanner(game) {
 }
 
 function createCartItem(game) {
-
   const item = document.createElement('div');
   item.classList.add('cart-item');
-  item.setAttribute('game-price', game.id);
-  item.setAttribute('game-id', game.id);
+  item.setAttribute('game-price', game.price);
+  item.setAttribute('game-id', game._id);
   item.onclick = () => onGameClick(event);
 
   const itemImg = document.createElement('img')
@@ -123,23 +122,31 @@ function createCartItem(game) {
   cartItemTitle.classList.add('cart-item-title')
 
   const cartItemPrice = document.createElement('p')
-  cartItemPrice.textContent = `$${game.id}`
+  cartItemPrice.textContent = `$${game.price}`
   cartItemPrice.classList.add('cart-item-price')
 
   const cartItemRemoveButton = document.createElement('button')
   cartItemRemoveButton.textContent = 'Remove'
   cartItemRemoveButton.classList.add('cart-item-remove')
   cartItemRemoveButton.classList.add('button')
-  cartItemRemoveButton.setAttribute('game-id', game.id)
+  cartItemRemoveButton.setAttribute('game-id', game._id)
 
   cartItemRemoveButton.addEventListener('click', (event) => {
     event.stopPropagation();
-    let oldItems = JSON.parse(localStorage.getItem('cart-items'));
-    let newItens = oldItems.filter((item) => {
-      return item !== event.currentTarget.getAttribute('game-id');
-    });
-    localStorage.setItem('cart-items', JSON.stringify(newItens));
-    window.location.reload();
+
+    const gameId = event.currentTarget.getAttribute('game-id');
+    var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
+
+    fetch(`/users/${loggedInUserId}/cart/${gameId}`, { method: 'DELETE' })
+      .then((response) => response.json())
+      .then((data) => {
+          alert('Sucess.');
+          location.reload();
+      })
+      .catch((error) => {
+        console.error('Error removing game to cart:', error);
+        alert('An error occurred while removing the item from the cart.');
+      });
   })
 
   cartItemInfo.appendChild(cartItemTitle)
@@ -151,6 +158,7 @@ function createCartItem(game) {
 
   return item
 }
+
 
 async function populatePage() {
   const searchParams = new URLSearchParams(window.location.search);
@@ -198,6 +206,10 @@ async function populatePage() {
       registerListener();
       break;
 
+    case '/admin-game-add':
+      document.getElementById("editGameForm").addEventListener("submit", addGame);
+      break;
+
     default:
       //handleAdminUI();
       //await populateHomePage()
@@ -236,21 +248,36 @@ async function populateGameDetailsPage(gameId) {
 }
 
 async function populateCartPage() {
-  const cartItems = JSON.parse(localStorage.getItem('cart-items'))
-  const items = document.querySelector('.cart-items')
+  const itemsContainer = document.querySelector('.cart-items');
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
   let totalPrice = 0;
 
-  if (cartItems) {
-    cartItems.forEach(async (item) => {
-      const game = await fetchGames({ id: item })
-      const cartItem = createCartItem(game)
-      items.appendChild(cartItem) 
-      
-      totalPrice = Number(totalPrice) + Number(cartItem.getAttribute('game-price'));
-      document.querySelector('.cart-total-price').innerHTML = `$${totalPrice}`
-    })
-  }
+  try {
+    const response = await fetch(`/users/${loggedInUserId}/cart`);
+    const cartItems = await response.json();
 
+    if (cartItems.length > 0) {
+      cartItems.forEach(async (item) => {
+        try {
+          const gameResponse = await fetch(`/games/${item}`);
+          const game = await gameResponse.json();
+          const cartItem = createCartItem(game);
+          itemsContainer.appendChild(cartItem);
+
+          totalPrice += Number(game.price);
+          document.querySelector('.cart-total-price').innerHTML = `$${totalPrice}`;
+        } catch (error) {
+          console.error('Error retrieving game from cart:', error);
+        }
+      });
+    } else {
+      const emptyMessage = document.createElement('p');
+      emptyMessage.textContent = 'Your cart is empty.';
+      itemsContainer.appendChild(emptyMessage);
+    }
+  } catch (error) {
+    console.error('Error retrieving cart items:', error);
+  }
 }
 
 async function populateHomePage() {
@@ -334,21 +361,19 @@ function onGameClick(event) {
 
 function addToCart(event) {
   const gameId = event.currentTarget.getAttribute('game-id');
-  let cartItems = JSON.parse(localStorage.getItem('cart-items'))
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
-    if (cartItems) {
-      if (!cartItems.includes(gameId)) {
-        cartItems.push(gameId)
-      } else {
-        alert('Jogo já está no carrinho')
-      }
-    } else {
-      cartItems = [gameId]
-    }
-    localStorage.setItem('cart-items', JSON.stringify(cartItems))
-
-  window.location.href = '/my-cart'
+  fetch(`/users/${loggedInUserId}/cart/add/${gameId}`, { method: 'POST' })
+    .then((response) => response.json())
+    .then((data) => {
+      window.location.href = '/my-cart';
+      alert("Success");
+    })
+    .catch((error) => {
+      console.error('Error adding game to cart:', error);
+    });
 }
+
 
 // Chamada da função ao carregar a página
 window.addEventListener("load", toggleUserProfileLink);
@@ -471,12 +496,21 @@ function showCheckoutConfirmation(method) {
 }
 
 function confirmCheckout() {
-  const noItensCart = [];
-  localStorage.setItem('cart-items', JSON.stringify(noItensCart));
+  // Realizar uma solicitação POST para limpar o carrinho no MongoDB
+  var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
-  alert("A sua compra foi confirmada!");
-  window.location.reload();
+  fetch(`/users/${loggedInUserId}/cart/all`, { method: 'DELETE' })
+    .then((response) => response.json())
+    .then((data) => {
+      alert('Success.');
+      location.reload();
+    })
+    .catch((error) => {
+      console.error('Error confirming checkout:', error);
+      alert('An error occurred while confirming the checkout.');
+    });
 }
+
 
 function logout() {
   // Salvar o usuário atualizado no session Storage
@@ -761,7 +795,7 @@ function handleCheckout() {
   
   if (!document.querySelector('.cart-item')) {
     alert('Voce não possui nenhum item no carrinho.');
-    window.location.href = "/index";
+    window.location.href = "/";
   }
 
   const paymentMethods = `
@@ -799,3 +833,41 @@ function handleCheckout() {
     });
   });
 }
+
+// Função para adicionar um novo jogo
+function addGame(event) {
+  event.preventDefault();
+
+  // Obter os valores dos campos do formulário
+  var name = document.getElementById("name").value;
+  var description = document.getElementById("description").value;
+  var price = document.getElementById("price").value;
+  var thumbnail = document.getElementById("game-thumbnail").files[0];
+
+  // Enviar uma requisição POST para a rota de adicionar jogo
+  fetch("/games/add", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: name,
+      price: price,
+      quantidade: 100,
+      description: description,
+      image: "batata"
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Exibir uma mensagem de sucesso
+      alert("Game added successfully!");
+
+      // Redirecionar para a página de administração
+      window.location.href = "/admin-page";
+    })
+    .catch(error => {
+      console.error("Error adding game:", error);
+    });
+}
+
