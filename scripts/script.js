@@ -396,7 +396,7 @@ function showPaymentMethod(checkbox) {
 function showCardMethod() {
   const cardMethod = `
   <form id="checkout-form" class="checkout-info-forms">
-    <img src="../../public/assets/cartao.png" alt="cartao">
+    <img src="/assets/cartao.png" alt="cartao">
     <label for="cardNumber">Card´s Number:</label>
     <input type="text" id="cardNumber" placeholder="1234 2345 3456 4567" required>
     <br>
@@ -425,7 +425,7 @@ function showCardMethod() {
 function showPixMethod() {
   const pixMethod = `
   <div class="checkout-info-pix">
-    <img src="../../public/assets/qrcode.png" alt="qrcode">
+    <img src="/assets/qrcode.png" alt="qrcode">
     <p>Pix Copia e Cola:</p>
     <input id="pix-copia-cola" type="text" value="DNWUQODNFQUOFBPQWbEWYCFUBKFBECWYFBWUCFBWCBFW@gamestore.net"    disabled>
     <button class="button" id="copyButton">Copy</button>
@@ -446,7 +446,7 @@ function showPaypalMethod() {
   const paypalMethod = `
   <div class="checkout-info-paypal">
     <a href="https://paypal.com" target="_blank">
-     <img class="checkout-info-paypal-img" src="../../public/assets/paypal.png" alt="paypal-site" href="https://paypal.com">
+     <img class="checkout-info-paypal-img" src="/assets/paypal.png" alt="paypal-site" href="https://paypal.com">
     </a>
     <p>PayPal transactions are authorized through the PayPal website. Click in the logo above to open a new browser    window and start the transaction.<br><br>    Please review your order before go to the website.  </p>
   </div>`;

@@ -13,6 +13,13 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
+// Rota para servir imagens do diretório "public/assets"
+app.get('/assets/:imageName', function (req, res) {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, '../../public/assets/', imageName);
+  res.sendFile(imagePath);
+});
+
 app.get('/login', function (req, res) {
     res.sendFile(path.join(__dirname, '../', 'login.html'));
 });
