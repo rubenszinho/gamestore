@@ -387,7 +387,7 @@ app.get('/games/latest', async (req, res) => {
 // Rota para obter os 5 jogos em destaque
 app.get('/games/featured', async (req, res) => {
   try {
-    const games = await Game.find({ emDestaque: true }).limit(5);
+    const games = await Game.find({ isFeatured: true }).limit(5);
     res.json(games);
   } catch (error) {
     res.status(500).json({ message: error.message });
