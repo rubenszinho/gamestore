@@ -315,6 +315,54 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const Game = mongoose.model('Game', gameSchema);
 
+// Rota para adicionar um novo jogo
+app.post('/games/add', upload.single('image'), async (req, res) => {
+  try {
+    const { id, name, price, quantidade, description, isFeatured, isGameOfTheYear, genre, platform} = req.body;
+    const image = req.file.buffer;
+
+    // Criar um novo objeto de usuário
+    const newGame = new Game({
+      _id: id,
+      name: name,
+      price: price,
+      quantidade: quantidade,
+      description: description,
+      image: image,
+      // image: "batata",
+      isFeatured: isFeatured,
+      isGameOfTheYear: isGameOfTheYear,
+      genre: genre,
+      platform: platform
+    });
+
+    // Salvar o novo usuário no banco de dados
+    await newGame.save();
+    res.status(200).json({ message: "Game added." });
+  } catch (error) {
+    console.error('Error creating game:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// rota pra pegar uma imagem
+app.get('/games/image/:id', async (req, res) => {
+  try {
+    const gameId = req.params.id;
+    const game = await Game.findById(gameId);
+
+    if (!game || !game.image) {
+      return res.status(404).json({ message: 'Image not found' });
+    }
+
+    res.set('Content-Type', 'image/jpeg');
+    res.send(game.image);
+  } catch (error) {
+    console.error('Error retrieving image:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Rota para buscar jogos por texto
 app.get('/games/search/:text', async (req, res) => {
   try {
@@ -343,36 +391,6 @@ app.get('/games/id/:id', async (req, res) => {
     }
   } catch (error) {
     console.error('Error getting game:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Rota para adicionar um novo jogo
-app.post('/games/add', upload.single('image'), async (req, res) => {
-  try {
-    const { id, name, price, quantidade, description, isFeatured, isGameOfTheYear, genre, platform} = req.body;
-    const image = req.file.buffer;
-
-    // Criar um novo objeto de usuário
-    const newGame = new Game({
-      _id: id,
-      name: name,
-      price: price,
-      quantidade: quantidade,
-      description: description,
-      //image: image,
-      image: "batata",
-      isFeatured: isFeatured,
-      isGameOfTheYear: isGameOfTheYear,
-      genre: genre,
-      platform: platform
-    });
-
-    // Salvar o novo usuário no banco de dados
-    await newGame.save();
-    res.status(200).json({ message: "Game added." });
-  } catch (error) {
-    console.error('Error creating game:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
