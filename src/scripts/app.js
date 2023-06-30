@@ -98,6 +98,29 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Código para criar o usuário admin padrão
+const createDefaultAdminUser = async () => {
+  try {
+    const adminUser = await User.findOne({ email: 'admin@admin.com' });
+    if (!adminUser) {
+      const newUser = new User({
+        _id: 42,
+        name: 'admin',
+        email: 'admin@admin.com',
+        password: 'admin',
+        isAdmin: true
+      });
+      await newUser.save();
+      console.log('Usuário admin padrão criado com sucesso.');
+    } else {
+      console.log('Usuário admin já existe no banco de dados.');
+    }
+  } catch (error) {
+    console.error('Ocorreu um erro ao criar o usuário admin padrão:', error);
+  }
+};
+createDefaultAdminUser();
+
 // Rota para registrar usuário
 app.post('/registerUser', async (req, res) => {
   try {
