@@ -75,7 +75,7 @@ function createBanner(game) {
   gameName.classList.add('banner__game-name');
   gameName.textContent = game.name;
   banner.appendChild(gameName);
-  banner.setAttribute('game-id', game.id);
+  banner.setAttribute('game-id', game._id);
 
   banner.onclick = onGameClick;
 
