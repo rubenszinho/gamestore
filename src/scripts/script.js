@@ -95,7 +95,7 @@ function createGameCard(game) {
 
   const price = document.createElement('span');
   price.className = 'game-card__price';
-  price.textContent = game.price 
+  price.textContent = `\$${game.price}`; 
 
   thumbnail.appendChild(price); // Add price to thumbnail instead of content
   content.appendChild(title);
@@ -222,7 +222,7 @@ async function populateGameDetailsPage(gameId) {
 
       document.querySelector('.game-details__title').textContent = game.name;
       document.querySelector('.game-details__description').innerHTML = game.description;
-      document.querySelector('.game-details__price').textContent = game.price;
+      document.querySelector('.game-details__price').textContent = `\$${game.price}`; 
 
       document.querySelector('.button').setAttribute('game-id', gameId);
       document.querySelector('.button').onclick = () => addToCart(event);
