@@ -83,7 +83,7 @@ function createGameCard(game) {
 
   const thumbnail = document.createElement('div');
   thumbnail.className = 'game-card__thumbnail';
-  thumbnail.style.backgroundImage = `url(${game.background_image})`;
+  thumbnail.style.backgroundImage = `url(/games/image/${game._id})`;
   thumbnail.alt = game.name;
 
   const content = document.createElement('div');
@@ -109,7 +109,7 @@ function createGameCard(game) {
 function createBanner(game) {
   const banner = document.createElement('div');
   banner.classList.add('banner');
-  banner.style.backgroundImage = `url(${game.background_image})`;
+  banner.style.backgroundImage = `url(/games/image/${game._id})`;
 
   const gameName = document.createElement('div');
   gameName.classList.add('banner__game-name');
@@ -131,7 +131,7 @@ function createCartItem(game) {
 
   const itemImg = document.createElement('img')
   itemImg.alt = game.name
-  itemImg.src = game.background_image
+  itemImg.src = `/games/image/${game._id}`;
   itemImg.classList.add('cart-item-image')
 
   const cartItemInfo = document.createElement('div')
@@ -217,7 +217,7 @@ async function populateGameDetailsPage(gameId) {
       const imgDiv = document.querySelector('.game-details__image');
       const gameImg = document.createElement('img');
       gameImg.alt = game.name;
-      gameImg.src = game.background_image;
+      gameImg.src = `/games/image/${gameId}`;
       imgDiv.appendChild(gameImg);
 
       document.querySelector('.game-details__title').textContent = game.name;
