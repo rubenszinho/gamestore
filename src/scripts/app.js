@@ -243,7 +243,7 @@ const gameSchema = new mongoose.Schema({
     required: true
   },
   image: {
-    type: String,
+    type: Buffer,
     required: true
   },
   isGameOfTheYear: {
@@ -260,21 +260,39 @@ const gameSchema = new mongoose.Schema({
   }
 });
 
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Especifique o diretório onde as imagens serão armazenadas
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage: multer.memoryStorage() });
+
 const Game = mongoose.model('Game', gameSchema);
 
-// Rota para obter todos os jogos
-app.get('/games', async (req, res) => {
+// Rota para buscar jogos por texto
+app.get('/games/search/:text', async (req, res) => {
   try {
-    const games = await Game.find();
-    res.json(games);
+    const searchText = req.params.text;
+    let searchResults;
+    if(searchText == "*"){
+      searchResults = await Game.find();
+    }else {
+      searchResults = await Game.find({ name: searchText } );
+    }
+    res.json(searchResults);
   } catch (error) {
-    console.error('Error getting games:', error);
+    console.error('Error searching games:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 // Rota para obter um jogo específico por ID
-app.get('/games/:id', async (req, res) => {
+app.get('/games/id/:id', async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
     if (game) {
@@ -289,9 +307,10 @@ app.get('/games/:id', async (req, res) => {
 });
 
 // Rota para adicionar um novo jogo
-app.post('/games/add', async (req, res) => {
+app.post('/games/add', upload.single('image'), async (req, res) => {
   try {
-    const { name, price, quantidade, description, image } = req.body;
+    const { name, price, quantidade, description} = req.body;
+    const image = req.file.buffer;
 
     // Criar um novo objeto de usuário
     const newGame = new Game({
@@ -300,7 +319,10 @@ app.post('/games/add', async (req, res) => {
       price: price,
       quantidade: quantidade,
       description: description,
-      image: image
+      //image: image,
+      image: "batata",
+      emDestaque: true,
+      isGameOfTheYear: true,
     });
 
     // Salvar o novo usuário no banco de dados
@@ -313,7 +335,7 @@ app.post('/games/add', async (req, res) => {
 });
 
 // Rota para atualizar um jogo existente
-app.put('/games/:id', async (req, res) => {
+app.put('/games/id/:id', async (req, res) => {
   try {
     const game = await Game.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (game) {
@@ -328,7 +350,7 @@ app.put('/games/:id', async (req, res) => {
 });
 
 // Rota para excluir um jogo
-app.delete('/games/:id', async (req, res) => {
+app.delete('/games/id/:id', async (req, res) => {
   try {
     const game = await Game.findByIdAndDelete(req.params.id);
     if (game) {

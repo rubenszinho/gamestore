@@ -1,4 +1,3 @@
-const API_KEY = "d25aa82587884b22824222c27300a44d";
 const gridContainer = document.querySelector('.grid-container');
 let currentTheme = "light";
 
@@ -35,29 +34,10 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
-async function fetchGames(options = {}) {
-  const { search = '', ordering = '', dates = '', id= '' } = options;
-  let url; // the url for a single game fetch is different
-  if (id) {
-    url = `https://api.rawg.io/api/games/${id}?key=${API_KEY}`
-  } else {
-    url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${search}&ordering=${ordering}&dates=${dates}&page_size=8`;
-  }
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    return (id) ? data : data.results;
-  } 
-  catch (error) {
-    console.error('Error fetching game data:', error);
-  }
-}
-
 function createGameCard(game) {
   const gameCard = document.createElement('div');
   gameCard.classList.add('game-card');
-  gameCard.setAttribute('game-id', game.id);
+  gameCard.setAttribute('game-id', game._id);
   gameCard.onclick = onGameClick;
   gameCard.className = 'game-card';
 
@@ -75,7 +55,7 @@ function createGameCard(game) {
 
   const price = document.createElement('span');
   price.className = 'game-card__price';
-  price.textContent = `$${game.id}` // como a API nao tem preço, usa o ID
+  price.textContent = game.price 
 
   thumbnail.appendChild(price); // Add price to thumbnail instead of content
   content.appendChild(title);
@@ -218,33 +198,60 @@ async function populatePage() {
 }
 
 async function populateSearchPage(searchText) {
-  const searchResults = await fetchGames({ ordering: '-rating', search: searchText });
+  try {
+    let response;
+    if(searchText == null){
+      response = await fetch(`/games/search/*`);
+    }else{
+      response = await fetch(`/games/search/${searchText}`);
+    }
+    if (response.ok) {
+      const searchResults = await response.json();
 
-  const searchResultsContainer = document.querySelector('.grid-container.search-results');
-  searchResultsContainer.innerHTML = ''; // Clear any previous search results
+      const searchResultsContainer = document.querySelector('.grid-container.search-results');
+      searchResultsContainer.innerHTML = ''; // Clear any previous search results
 
-  searchResults.forEach((game) => {
-    const gameCard = createGameCard(game);
-    searchResultsContainer.appendChild(gameCard);
-  });
+      searchResults.forEach((game) => {
+        const gameCard = createGameCard(game);
+        searchResultsContainer.appendChild(gameCard);
+      });
+    } else {
+      console.error('Error searching games:', response.status);
+      // Handle error case
+    }
+  } catch (error) {
+    console.error('Error searching games:', error);
+    // Handle error case
+  }
 }
 
 async function populateGameDetailsPage(gameId) {
-  const game = await fetchGames({ id: gameId })
-  console.log(game)
-  
-  const imgDiv = document.querySelector('.game-details__image');
-  const gameImg = document.createElement('img');
-  gameImg.alt = game.name
-  gameImg.src = game.background_image
-  imgDiv.appendChild(gameImg)
-  
-  document.querySelector('.game-details__title').textContent = game.name
-  document.querySelector('.game-details__description').innerHTML = game.description
-  document.querySelector('.game-details__price').textContent = `$${game.id}`
+  try {
+    const response = await fetch(`/games/id/${gameId}`);
+    if (response.ok) {
+      const game = await response.json();
+      console.log(game);
 
-  document.querySelector('.button').setAttribute('game-id', gameId);
-  document.querySelector('.button').onclick = () => addToCart(event);
+      const imgDiv = document.querySelector('.game-details__image');
+      const gameImg = document.createElement('img');
+      gameImg.alt = game.name;
+      gameImg.src = game.background_image;
+      imgDiv.appendChild(gameImg);
+
+      document.querySelector('.game-details__title').textContent = game.name;
+      document.querySelector('.game-details__description').innerHTML = game.description;
+      document.querySelector('.game-details__price').textContent = game.price;
+
+      document.querySelector('.button').setAttribute('game-id', gameId);
+      document.querySelector('.button').onclick = () => addToCart(event);
+    } else {
+      console.error('Error getting game:', response.status);
+      // Handle error case when game is not found
+    }
+  } catch (error) {
+    console.error('Error getting game:', error);
+    // Handle error case
+  }
 }
 
 async function populateCartPage() {
@@ -259,7 +266,7 @@ async function populateCartPage() {
     if (cartItems.length > 0) {
       cartItems.forEach(async (item) => {
         try {
-          const gameResponse = await fetch(`/games/${item}`);
+          const gameResponse = await fetch(`/games/id/${item}`);
           const game = await gameResponse.json();
           const cartItem = createCartItem(game);
           itemsContainer.appendChild(cartItem);
@@ -281,9 +288,9 @@ async function populateCartPage() {
 }
 
 async function populateHomePage() {
-  const featuredGames = await fetchGames();
-  const topGames = await fetchGames({ ordering: '-rating', dates: '2022-01-01,2022-12-31' });
-  const newReleases = await fetchGames({ ordering: '-released', dates: '2022-01-01,2022-12-31' });
+  const featuredGames = await fetch('/games/featured').then(response => response.json());
+  const topGames = await fetch('/games/top').then(response => response.json());
+  const newReleases = await fetch('/games/latest').then(response => response.json());
 
   const topGamesContainer = document.querySelector('.grid-container.top-games');
   topGames.forEach((game) => {
@@ -329,6 +336,7 @@ async function populateHomePage() {
     moveCarousel(1);
   });
 }
+
 
 function onSearchClick() {
   const searchInput = document.querySelector('.search-input');
@@ -842,21 +850,19 @@ function addGame(event) {
   var name = document.getElementById("name").value;
   var description = document.getElementById("description").value;
   var price = document.getElementById("price").value;
-  var thumbnail = document.getElementById("game-thumbnail").files[0];
+  var image = document.getElementById("game-thumbnail").files[0];
+
+  var formData = new FormData();
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("price", price);
+  formData.append("quantidade", 100);
+  formData.append("image", image);
 
   // Enviar uma requisição POST para a rota de adicionar jogo
   fetch("/games/add", {
     method: "POST",
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      name: name,
-      price: price,
-      quantidade: 100,
-      description: description,
-      image: "batata"
-    })
+    body: formData
   })
     .then(response => response.json())
     .then(data => {
