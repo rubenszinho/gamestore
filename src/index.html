@@ -59,11 +59,15 @@
     </footer>
     <script src="scripts/pages-html.js"></script>
     <script src="scripts/script.js"></script>
+    <script src="scripts/admin-user.js"></script>
+    <script src="scripts/populate-page.js"></script>
     <script>
+
         pageContent(window.location.pathname.substring(window.location.pathname.lastIndexOf('/')));
         populatePage(window.location.pathname.substring(window.location.pathname.lastIndexOf('/')));
 
         function changeContent(pagName) {
+            history.replaceState({}, "", pagName);
             pageContent(pagName);
             populatePage(pagName);
         }

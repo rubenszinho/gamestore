@@ -112,7 +112,7 @@ const admin_page = `
         <p class="num-users-id" id="numUsers">Usuarios cadastrados: 100 </p>
     </div>
     </div>
-    <a class="button" href="/admin-users-list">Users List</a>
+    <a class="button" onclick="changeContent('/admin-users-list')"">Users List</a>
 </div>`
 
 const admin_users_list = `
@@ -211,11 +211,11 @@ const login = `
         <div>
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter your password" required>
-            <p style="text-align: end;">Forgot password? <a href="/forgot-password">Click here</a></p>
+            <p style="text-align: end;">Forgot password? <a onclick="changeContent('/forgot-password')">Click here</a></p>
         </div>
         <button type="submit" class="button">Login</button>
     </form>
-    <p>Don't have an account? <a href="/register">Register here</a></p>
+    <p>Don't have an account? <a onclick="changeContent('/register')">Register here</a></p>
 </div>`
 
 const my_cart = `
@@ -266,7 +266,7 @@ const register = `
 
         <button type="submit" class="button">Register</button>
     </form>
-    <p>Already have an account? <a href="/login">Login here</a></p>
+    <p>Already have an account? <a onclick="changeContent('/login')">Login here</a></p>
 </div>`
 
 const search = `
@@ -318,7 +318,7 @@ const user_profile = `
         <p class="user-phone" id="userPhone">Phone: </p>
     </div>
     </div>
-    <a id="editProfileButton" class="button" href="/edit-profile">Edit Profile</a>
+    <a id="editProfileButton" class="button" onclick="changeContent('/edit-profile')">Edit Profile</a>
     <button class="button" onclick="logout()" >Log out</button>
 </div>
 </div>`
@@ -345,7 +345,7 @@ const home = `
         <h1 class="title">Top Games of the Year</h1>
         <div class="grid-container top-games"></div>
     </div>
-    <a href="/admin-game-add">
+    <a onclick="changeContent('/admin-game-add')">
         <div class="add-game-button">
         <div class="add-game-button__plus">+</div>
         </div>
