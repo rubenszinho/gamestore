@@ -5,7 +5,7 @@ async function populatePage() {
   const searchParams = new URLSearchParams(window.location.search);
   const searchText = searchParams.get('search');
   const id = searchParams.get('id');
-  const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'))
+  const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'));
 
   switch (pagName) {
     case '/search':
@@ -18,6 +18,7 @@ async function populatePage() {
       break;
 
     case '/my-cart':
+      //document.getElementById('checkout-button').addEventListener('click', () => handleCheckout());
       await populateCartPage()
       break;
 
@@ -27,6 +28,7 @@ async function populatePage() {
       break;
 
     case '/user-profile':
+      //document.getElementById('logout-button').addEventListener('click', () => logout()); 
       updateUserProfile(id);
       break;
 
@@ -470,12 +472,13 @@ function showCheckoutConfirmation(method) {
   </div>`;
 
   if (method) {
-    confirmation += '<button class="button" onclick="confirmCheckout()">Confirm Transaction</button>'
+    confirmation += '<button id="confirm-checkout-button" class="button">Confirm Transaction</button>'
   } else {
     confirmation += '<button class="button" disable>Waiting for the payment server...</button>'
   }
   
   document.querySelector('.checkout-confirm').innerHTML = confirmation;
+  document.getElementById('confirm-checkout-button').addEventListener('click', () => confirmCheckout());
 
   let gameList = '';
   document.querySelectorAll('.cart-item-title').forEach((item) => {
