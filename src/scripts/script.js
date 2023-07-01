@@ -1,11 +1,9 @@
 /* Inicializa a pagina */
-populatePage();
 
-async function populatePage() {
+async function populatePage(pagName) {
   const searchParams = new URLSearchParams(window.location.search);
   const searchText = searchParams.get('search');
   const id = searchParams.get('id');
-  const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'));
 
   switch (pagName) {
     case '/search':
@@ -18,7 +16,6 @@ async function populatePage() {
       break;
 
     case '/my-cart':
-      //document.getElementById('checkout-button').addEventListener('click', () => handleCheckout());
       await populateCartPage()
       break;
 
@@ -28,7 +25,6 @@ async function populatePage() {
       break;
 
     case '/user-profile':
-      //document.getElementById('logout-button').addEventListener('click', () => logout()); 
       updateUserProfile(id);
       break;
 
@@ -69,6 +65,8 @@ async function populatePage() {
       });
       break;
 
+    case '/forgot-password':
+      handleForgotPassword();
     default:
       //handleAdminUI();
       //await populateHomePage()
@@ -797,6 +795,42 @@ function toggleUserProfileLink() {
     } else {
       userProfileLink.style.display = "none"; // Oculta o link "User Profile"
     }
+}
+
+function handleForgotPassword() {
+  console.log('oi')
+  document.getElementById("recoveryForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var email = document.getElementById("email").value;
+    var phone = document.getElementById("phone").value;
+    var password = document.getElementById("password").value;
+    var checkPassword = document.getElementById("check-password").value;
+
+    if (password !== checkPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    // Obter a lista de usuários do session Storage
+    var userList = JSON.parse(sessionStorage.getItem("users"));
+
+    // Atualizar a senha no objeto de usuário correspondente
+    var user = userList.find(function (user) {
+        return user.email === email && user.phone === phone;
+    });
+
+    if (user) {
+        user.password = password;
+        sessionStorage.setItem("users", JSON.stringify(userList));
+        alert("Password updated successfully.");
+    } else {
+        alert("User not found.");
+    }
+
+    // Redirecionar para a página de login ou qualquer outra página necessária
+    window.location.href = "/login";
+});
 }
 
 function handleCheckout() { 

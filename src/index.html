@@ -15,12 +15,12 @@
     <header>
         <div class="navbar">
             <div class="nav-items">
-                <a href="login">Login</a>
-                <a href="/">Home</a>
-                <a href="search">Category</a>
-                <a href="my-cart">My Cart</a>
-                <a id="userProfileLink" href="user-profile">User Profile</a>
-                <a id="adminLink" href="admin-page">Admin</a>
+                <a onclick="changeContent('/login')">Login</a>
+                <a onclick="changeContent('/')">Home</a>
+                <a onclick="changeContent('/search')">Category</a>
+                <a onclick="changeContent('/my-cart')">My Cart</a>
+                <a id="userProfileLink" onclick="changeContent('/user-profile')">User Profile</a>
+                <a id="adminLink" onclick="changeContent('/admin-page')">Admin</a>
             </div>
 
             <div class="search-container">
@@ -60,7 +60,13 @@
     <script src="scripts/pages-html.js"></script>
     <script src="scripts/script.js"></script>
     <script>
-        console.log('oi');
+        pageContent(window.location.pathname.substring(window.location.pathname.lastIndexOf('/')));
+        populatePage(window.location.pathname.substring(window.location.pathname.lastIndexOf('/')));
+
+        function changeContent(pagName) {
+            pageContent(pagName);
+            populatePage(pagName);
+        }
     </script>
 </body>
 

@@ -352,57 +352,62 @@ const home = `
     </a>
 </div>`
 
-const pagName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/'));
-switch (pagName) {
-    case '/search':
-      document.getElementById('page-content').innerHTML = search;
-      break;
-    
-    case '/game-details':
-      document.getElementById('page-content').innerHTML = game_details;
-      break;
+function pageContent(pagName) {
 
-    case '/my-cart':
-      document.getElementById('page-content').innerHTML = my_cart;
-      break;
+    switch (pagName) {
+        case '/search':
+            document.getElementById('page-content').innerHTML = search;
+            break;
 
-    case '/':
-      document.getElementById('page-content').innerHTML = home;
-      break;
+        case '/game-details':
+            document.getElementById('page-content').innerHTML = game_details;
+            break;
 
-    case '/user-profile':
-      document.getElementById('page-content').innerHTML = user_profile;
-      break;
+        case '/my-cart':
+            document.getElementById('page-content').innerHTML = my_cart;
+            break;
 
-    case '/edit-profile':
-      document.getElementById('page-content').innerHTML = edit_profile;
-      break;
+        case '/':
+            document.getElementById('page-content').innerHTML = home;
+            break;
 
-    case '/admin-users-list':
-      document.getElementById('page-content').innerHTML = admin_users_list;
-      break;
+        case '/user-profile':
+            document.getElementById('page-content').innerHTML = user_profile;
+            break;
 
-    case '/admin-page':
-      document.getElementById('page-content').innerHTML = admin_page;
-      break;
+        case '/edit-profile':
+            document.getElementById('page-content').innerHTML = edit_profile;
+            break;
 
-    case '/login':
-      document.getElementById('page-content').innerHTML = login;
-      break;
+        case '/admin-users-list':
+            document.getElementById('page-content').innerHTML = admin_users_list;
+            break;
 
-    case '/register':
-      document.getElementById('page-content').innerHTML = register;
-      break;
+        case '/admin-page':
+            document.getElementById('page-content').innerHTML = admin_page;
+            break;
 
-    case '/admin-game-add':
-      document.getElementById('page-content').innerHTML = admin_game_add;
-      break;
+        case '/login':
+            document.getElementById('page-content').innerHTML = login;
+            break;
 
-    case '/admin-game-edit':
-      document.getElementById('page-content').innerHTML = admin_game_edit
-      break;
+        case '/register':
+            document.getElementById('page-content').innerHTML = register;
+            break;
 
-    default:
-      //document.getElementById('page-content').innerHTML = '';
-      break;
+        case '/admin-game-add':
+            document.getElementById('page-content').innerHTML = admin_game_add;
+            break;
+
+        case '/admin-game-edit':
+            document.getElementById('page-content').innerHTML = admin_game_edit
+            break;
+
+        case '/forgot-password':
+            document.getElementById('page-content').innerHTML = forgot_password
+
+        default:
+            //document.getElementById('page-content').innerHTML = '';
+            break;
+    }
 }
