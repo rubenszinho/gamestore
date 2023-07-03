@@ -21,55 +21,55 @@ app.get('/assets/:imageName', function (req, res) {
 });
 
 app.get('/login', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'login.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/register', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'register.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/admin-game-add', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'admin-game-add.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/admin-game-edit', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'admin-game-edit.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/edit-profile', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'edit-profile.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/forgot-password', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'forgot-password.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/game-details', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'game-details.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/home-admin', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'home-admin.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/my-cart', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'my-cart.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/search', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'search.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/user-profile', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'user-profile.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));  
 });
 
 app.get('/admin-page', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'admin-page.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.get('/admin-users-list', function (req, res) {
-    res.sendFile(path.join(__dirname, '../', 'admin-users-list.html'));
+    res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 app.listen(3000, () => console.log('Server is running on port 3000'));
