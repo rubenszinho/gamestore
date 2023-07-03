@@ -35,18 +35,31 @@ const admin_game_add = `
             <input type="checkbox" id="isFeatured" class="edit-profile-input">
         </div>
         <div>
-            <label for="genre">Genre(s)</label>
-            <input type="text" id="genre" class="edit-profile-input" />
+            <label for="genre">Genre</label>
+            <select id="genre" class="edit-profile-input">
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Puzzle">Puzzle</option>
+                <option value="RPG">RPG</option>
+                <option value="Simulation">Simulation</option>
+                <option value="Strategy">Strategy</option>
+                <option value="Sports">Sports</option>
+                <option value="MMO">MMO</option>
+            </select>
         </div>
         <div>
-            <label for="platform">Platform(s)</label>
-            <input type="text" id="platform" class="edit-profile-input" />
+            <label for="platform">Platform</label>
+            <select id="platform" class="edit-profile-input">
+                <option value="PC">PC</option>
+                <option value="PlayStation">PlayStation</option>
+                <option value="Xbox">Xbox</option>
+            </select>
         </div>
         <div>
             <button type="submit" class="button">Submit</button>
         </div>
     </form>
-</div>`
+</div>`;
 
 const admin_game_edit = `
 <div class="container">
@@ -86,11 +99,24 @@ const admin_game_edit = `
         </div>
         <div>
             <label for="genre">Genre</label>
-            <input type="text" id="genre" class="edit-profile-input">
+            <select id="genre" class="edit-profile-input">
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Puzzle">Puzzle</option>
+                <option value="RPG">RPG</option>
+                <option value="Simulation">Simulation</option>
+                <option value="Strategy">Strategy</option>
+                <option value="Sports">Sports</option>
+                <option value="MMO">MMO</option>
+            </select>
         </div>
         <div>
             <label for="platform">Platform</label>
-            <input type="text" id="platform" class="edit-profile-input">
+            <select id="platform" class="edit-profile-input">
+                <option value="PC">PC</option>
+                <option value="PlayStation">PlayStation</option>
+                <option value="Xbox">Xbox</option>
+            </select>
         </div>
         <div>
             <button type="submit" class="button">Submit</button>
@@ -99,7 +125,7 @@ const admin_game_edit = `
     <div>
         <button id="game-delete-button" class="button">Delete</button>
     </div>
-</div>`
+</div>`;
 
 const admin_page = `
 <div class="container">
@@ -274,28 +300,54 @@ const search = `
     <div class="search-content">
     <div class="filter-sidebar">
         <div class="filter-section">
-        <h3>Genre</h3>
-        <div class="filter-item">
-            <input type="checkbox" id="genre-action" />
-            <label for="genre-action">Action</label>
-        </div>
-        <div class="filter-item">
-            <input type="checkbox" id="genre-adventure" />
-            <label for="genre-adventure">Adventure</label>
-        </div>
-        <!-- Add more genres -->
+            <h3>Genre</h3>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-action" />
+                <label for="genre-action">Action</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-adventure" />
+                <label for="genre-adventure">Adventure</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-puzzle" />
+                <label for="genre-puzzle">Puzzle</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-rpg" />
+                <label for="genre-rpg">RPG</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-simulation" />
+                <label for="genre-simulation">Simulation</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-strategy" />
+                <label for="genre-strategy">Strategy</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-sports" />
+                <label for="genre-sports">Sports</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="genre-mmo" />
+                <label for="genre-mmo">MMO</label>
+            </div>
         </div>
         <div class="filter-section">
-        <h3>Platform</h3>
-        <div class="filter-item">
-            <input type="checkbox" id="platform-pc" />
-            <label for="platform-pc">PC</label>
-        </div>
-        <div class="filter-item">
-            <input type="checkbox" id="platform-ps4" />
-            <label for="platform-ps4">PlayStation 4</label>
-        </div>
-        <!-- Add more platforms -->
+            <h3>Platform</h3>
+            <div class="filter-item">
+                <input type="checkbox" id="platform-pc" />
+                <label for="platform-pc">PC</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="platform-ps" />
+                <label for="platform-ps">PlayStation</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="platform-xbox" />
+                <label for="platform-xbox">Xbox</label>
+            </div>
         </div>
     </div>
     <div class="search-results-container"> <!-- Adicione esta linha -->
@@ -311,8 +363,6 @@ const user_profile = `
     <div class="user-info">
     <img class="user-avatar" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="User Avatar">
     <div>
-        <p class="user-id" id="userId">ID: </p>
-        <p class="user-isAdmin" id="isAdmin">Admin: </p>
         <h2 class="user-name" id="userName"></h2>
         <p class="user-email" id="userEmail"></p>
         <p class="user-phone" id="userPhone">Phone: </p>

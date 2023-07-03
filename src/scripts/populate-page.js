@@ -316,11 +316,9 @@ function updateUserProfile(userId) {
 
                     // Preencher os campos do formulário com os dados do usuário
                     if (document.getElementById("userName")) { // se estiver na página de perfil
-                        document.getElementById("userId").textContent = user._id;
-                        document.getElementById("isAdmin").textContent = user.isAdmin;
                         document.getElementById("userName").textContent = user.name;
                         document.getElementById("userEmail").textContent = user.email;
-                        document.getElementById("userPhone").textContent = user.phone;
+                        document.getElementById("userPhone").textContent = `Phone: ${user.phone}`;
                         document.getElementById("editProfileButton").href = `/edit-profile?id=${user._id}`;
                     }
 
