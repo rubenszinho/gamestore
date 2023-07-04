@@ -35,3 +35,9 @@ z
     font-weight: bold;
     color: var(--title-color);
 }
+
+.game-details__stock {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+}

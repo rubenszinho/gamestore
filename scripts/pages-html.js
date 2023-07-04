@@ -215,6 +215,7 @@ const game_details = `
         <h1 class="game-details__title"></h1>
         <p class="game-details__description"></p>
         <p class="game-details__price">$0</p>
+        <p class="game-details__stock"></p>
         <a class="button">Add to Cart</a>
     </div>
     </div>

@@ -65,6 +65,7 @@ function addGame(event) {
     var name = document.getElementById("name").value;
     var description = document.getElementById("description").value;
     var price = document.getElementById("price").value;
+    var qtt = document.getElementById("quantidade").value;
     var image = document.getElementById("game-thumbnail").files[0];
     var isFeatured = document.getElementById("isFeatured").checked;
     var isGameOfTheYear = document.getElementById("isGameOfTheYear").checked;
@@ -76,7 +77,7 @@ function addGame(event) {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("price", price);
-    formData.append("quantidade", 100);
+    formData.append("quantidade", qtt);
     formData.append("isFeatured", isFeatured);
     formData.append("isGameOfTheYear", isGameOfTheYear);
     formData.append("genre", genre);
