@@ -116,11 +116,14 @@ function confirmCheckout() {
   // Realizar uma solicitação POST para limpar o carrinho no MongoDB
   var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
+  // altera as infos no estoque
+  handleStock(loggedInUserId);
+
   fetch(`/users/${loggedInUserId}/cart/all`, { method: 'DELETE' })
     .then((response) => response.json())
     .then((data) => {
       alert('Success.');
-      location.reload();
+      changeContent('/my-cart')
     })
     .catch((error) => {
       console.error('Error confirming checkout:', error);
@@ -197,6 +200,41 @@ async function handleCheckout() {
   });
 }
 
-function handleStock() {
+async function handleStock(loggedInUserId) {
   // FAZER UM POST PARA DIMINUIR A QTT COMPRADA NO ESTOQUE DO JOGO
+  try {
+    const response = await fetch(`/users/${loggedInUserId}/cart`);
+    const cartItems = await response.json();
+
+    cartItems.forEach(async (item) => {
+      try {
+        const gameResponse = await fetch(`/games/id/${item}`);
+        const game = await gameResponse.json();
+        let new_qtt = game.quantidade - 1;
+
+        const formData = new FormData();
+        formData.append("_id", game._id);
+        formData.append("name", game.name);
+        formData.append("description", game.description);
+        formData.append("price", game.price);
+        formData.append("quantidade", new_qtt);
+        formData.append("isGameOfTheYear", game.isGameOfTheYear);
+        formData.append("isFeatured", game.isFeatured);
+        formData.append("genre", game.genre);
+        formData.append("platform", game.platform);
+        formData.append("image", game.image);
+        
+        await fetch(`/games/id/${game._id}`, {
+          method: "PUT",
+          body: formData,
+        });
+
+
+      } catch (error) {
+        console.error('Error to update the stock:', error);
+      }
+    });
+  } catch (error) {
+    console.error('Error to update the stock:', error);
+  }
 }
