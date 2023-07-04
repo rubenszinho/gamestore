@@ -144,9 +144,6 @@ async function populateCartPage() {
                 try {
                     const gameResponse = await fetch(`/games/id/${item}`);
                     const game = await gameResponse.json();
-
-                    // VERIFICAR SE O JOGO TEM CHAVE NO ESTOQUE PARA POR NO CARRINHO
-
                     const cartItem = createCartItem(game);
                     itemsContainer.appendChild(cartItem);
 

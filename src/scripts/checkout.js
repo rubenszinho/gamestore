@@ -128,7 +128,7 @@ function confirmCheckout() {
     });
 }
 
-function handleCheckout() {
+async function handleCheckout() {
   var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
   if (loggedInUserId == null) {
@@ -139,6 +139,27 @@ function handleCheckout() {
     alert('Voce não possui nenhum item no carrinho.');
     changeContent('/');
   }
+
+  try {
+    const response = await fetch(`/users/${loggedInUserId}/cart`);
+    const cartItems = await response.json();
+
+    cartItems.forEach(async (item) => {
+      try {
+        const gameResponse = await fetch(`/games/id/${item}`);
+        const game = await gameResponse.json();
+        if (game.quantidade <= 0) {
+          alert(`O jogo ${game.name} não está mais em estoque, retire-o do carrinho para continuar a compra!`);
+          changeContent('/my-cart');
+        }
+      } catch (error) {
+        console.error('Error retrieving game from cart:', error);
+      }
+    });
+  } catch (error) {
+    console.error('Error retrieving cart items:', error);
+  }
+
 
   const paymentMethods = `
     <h2>Payments</h2>
@@ -177,5 +198,5 @@ function handleCheckout() {
 }
 
 function handleStock() {
-   // FAZER UM POST PARA DIMINUIR A QTT COMPRADA NO ESTOQUE DO JOGO
+  // FAZER UM POST PARA DIMINUIR A QTT COMPRADA NO ESTOQUE DO JOGO
 }

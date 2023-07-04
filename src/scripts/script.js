@@ -86,7 +86,7 @@ function createCartItem(game) {
       .then((response) => response.json())
       .then((data) => {
           alert('Sucess.');
-          location.reload();
+          changeContent('/my-cart');
       })
       .catch((error) => {
         console.error('Error removing game to cart:', error);
