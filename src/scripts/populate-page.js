@@ -115,8 +115,8 @@ async function populateGameDetailsPage(gameId) {
 
             document.querySelector('.game-details__title').textContent = game.name;
             document.querySelector('.game-details__description').innerHTML = game.description;
+            document.querySelector('.game-details__stock').textContent = `Restam apenas ${game.quantidade} chave(s) para esse jogo!`
             document.querySelector('.game-details__price').textContent = `\$${game.price}`;
-
             document.querySelector('.button').setAttribute('game-id', gameId);
             document.querySelector('.button').onclick = () => addToCart(event);
             document.querySelector('.edit-game-button').onclick = () => onEditClick(gameId);
@@ -144,6 +144,9 @@ async function populateCartPage() {
                 try {
                     const gameResponse = await fetch(`/games/id/${item}`);
                     const game = await gameResponse.json();
+
+                    // VERIFICAR SE O JOGO TEM CHAVE NO ESTOQUE PARA POR NO CARRINHO
+
                     const cartItem = createCartItem(game);
                     itemsContainer.appendChild(cartItem);
 
