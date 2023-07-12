@@ -145,32 +145,36 @@ async function addToCart(event) {
   var loggedInUserId = JSON.parse(sessionStorage.getItem("loggedInUserId"));
 
   // PEGAR INFO DO JOGO E VER SE TEM 1 NO ESTOQUE AINDA
-  try {
-    const response = await fetch(`/games/id/${gameId}`);
-    if (response.ok) {
-        const game = await response.json();
-        console.log(game);
+  if (!loggedInUserId) {
+    changeContent('/login');
+  } else {
+    try {
+      const response = await fetch(`/games/id/${gameId}`);
+      if (response.ok) {
+          const game = await response.json();
+          console.log(game);
 
-        if (game.quantidade > 0) {
-          fetch(`/users/${loggedInUserId}/cart/add/${gameId}`, { method: 'POST' })
-          .then((response) => response.json())
-          .then((data) => {
-            changeContent('/my-cart');
-            alert("Success");
-          })
-          .catch((error) => {
-            console.error('Error adding game to cart:', error);
-          });
-        } else {
-          alert('Não há mais chave para esse jogo no estoque!');
-        }
-    } else {
-        console.error('Error getting game:', response.status);
-        // Handle error case when game is not found
+          if (game.quantidade > 0) {
+            fetch(`/users/${loggedInUserId}/cart/add/${gameId}`, { method: 'POST' })
+            .then((response) => response.json())
+            .then((data) => {
+              changeContent('/my-cart');
+              alert("Success");
+            })
+            .catch((error) => {
+              console.error('Error adding game to cart:', error);
+            });
+          } else {
+            alert('Não há mais chave para esse jogo no estoque!');
+          }
+      } else {
+          console.error('Error getting game:', response.status);
+          // Handle error case when game is not found
+      }
+    } catch (error) {
+      console.error('Error getting game:', error);
+      // Handle error case
     }
-  } catch (error) {
-    console.error('Error getting game:', error);
-    // Handle error case
   }
 }
 

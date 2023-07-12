@@ -7,7 +7,6 @@ function logout() {
 }
 
 function handleForgotPassword() {
-    console.log('oi')
     document.getElementById("recoveryForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
