@@ -97,7 +97,7 @@ function showCheckoutConfirmation(method) {
   if (method) {
     confirmation += '<button class="button" onclick="confirmCheckout()">Confirm Transaction</button>'
   } else {
-    confirmation += '<button class="button" disable>Waiting for the payment server...</button>'
+    confirmation += '<button class="button" onclick="confirmCheckout()">Waiting for the payment server...</button>'
   }
 
   document.querySelector('.checkout-confirm').innerHTML = confirmation;
