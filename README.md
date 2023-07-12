@@ -38,4 +38,8 @@ Carrinho: Abrir um jogo -> adicionar ao carrinho -> fazer checkout (o carrinho p
 Buscar jogos: digitar na barra de busca e clicar no botao -> conferir os resultados;
 
 ### Procedimentos de compilação
-TODO
+É necessário ter o [MongoDB](https://www.mongodb.com/try/download/community) e [Node](https://nodejs.org/en/download) instalado na sua máquina e seguir os seguintes passos:
+- `git clone https://github.com/rubenszinho/gamestore.git`
+- `cd gamestore`
+- `npm install --force`
+- `npm start`
